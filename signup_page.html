@@ -27,7 +27,15 @@
                         <input type="password" id="password" required>
                         <span id="toggle-password-signup" class="material-symbols-outlined">visibility</span>
                     </div>
-                </div>                
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="confirm-password" required>
+                        <span id="toggle-confirm-password" class="material-symbols-outlined">visibility</span>
+                    </div>
+                    <div id="password-error" class="error-message"></div> <!-- Error message for signup password -->
+                </div>                                         
                 <button type="submit" class="signup-btn">Sign Up</button>
             </form>
             <div class="login-link">
