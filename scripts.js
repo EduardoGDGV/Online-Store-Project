@@ -12,18 +12,55 @@ window.onload = function () {
             loginError.textContent = ''; // Clear previous errors
 
             try {
-                const storedUser = JSON.parse(localStorage.getItem(email));
-
-                if (storedUser && storedUser.password === password) {
-                    localStorage.setItem('loggedInUser', email);  // Set the logged-in user
-                    window.location.href = 'main_page.html';      // Redirect to the main page after successful login
+                // Check for admin credentials
+                if (email === 'admin@example.com' && password === 'admin') {
+                    localStorage.setItem('isAdminLoggedIn', 'true'); // Set admin logged in status
+                    window.location.href = 'admin_page.html'; // Redirect to admin area
                 } else {
-                    loginError.textContent = 'Invalid email or password. Please try again.';
+                    // Regular user login check
+                    const storedUser = JSON.parse(localStorage.getItem(email));
+                    if (storedUser && storedUser.password === password) {
+                        localStorage.setItem('loggedInUser', email); // Set the logged-in user
+                        window.location.href = 'main_page.html'; // Redirect to the main page after successful login
+                    } else {
+                        loginError.textContent = 'Invalid email or password. Please try again.';
+                    }
                 }
             } catch (e) {
                 console.error('Error retrieving user data:', e);
                 loginError.textContent = 'An error occurred while logging in. Please try again.';
             }
+        });
+    }
+
+    // Ensure admin area is only accessible if logged in
+    if (window.location.pathname.endsWith('admin_page.html')) {
+        const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn');
+        if (isAdminLoggedIn !== 'true') {
+            window.location.href = 'login_page.html'; // Redirect to login if not logged in
+        }
+    }
+
+    // Handle additional actions in admin area
+    const registerAdmin = document.getElementById('register-admin');
+    const registerCustomer = document.getElementById('register-customer');
+    const registerProduct = document.getElementById('register-product');
+
+    if (registerAdmin) {
+        registerAdmin.addEventListener('click', function() {
+            alert('Functionality to register an admin will be implemented here.');
+        });
+    }
+
+    if (registerCustomer) {
+        registerCustomer.addEventListener('click', function() {
+            alert('Functionality to register a customer will be implemented here.');
+        });
+    }
+
+    if (registerProduct) {
+        registerProduct.addEventListener('click', function() {
+            alert('Functionality to register a product will be implemented here.');
         });
     }
 
@@ -102,6 +139,7 @@ window.onload = function () {
     if (logoutButton) {
         logoutButton.addEventListener('click', function () {
             localStorage.removeItem('loggedInUser'); // Remove the logged-in user
+            localStorage.removeItem('isAdminLoggedIn'); // Remove admin logged in status
             window.location.href = 'login_page.html';  // Redirect to login page after logout
         });
     }
