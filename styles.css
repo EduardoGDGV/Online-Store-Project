@@ -37,6 +37,14 @@ header {
     background-color: #007bff;
 }
 
+#description{
+    position: absolute;
+    top: 100px;
+    left: 0;
+    width: 310px;
+    text-align: center;
+}
+
 .logo h1 {
     margin: 0;
     font-size: 28px;
@@ -139,6 +147,7 @@ footer {
 .landing-content {
     position: relative; /* Make sure the content is on top of the overlay */
     z-index: 2; /* Higher than the overlay */
+    align-items: center;
 }
 
 .landing-content h1 {
