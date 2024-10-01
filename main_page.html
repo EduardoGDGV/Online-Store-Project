@@ -1,53 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Meta tags for character encoding and responsive design -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title of the page that appears on the browser tab -->
     <title>Main Page - Online Store</title>
+    <!-- Link to the external CSS file for page styling -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Header section containing the logo and navigation menu -->
     <header>
         <div class="logo">
             <!-- Wrap the logo in an anchor tag that points to the landing page -->
-            <a href="landing_page.html"> <!-- Replace "landing-page.html" with the actual landing page URL -->
-                <h1>STYLACT</h1>
+            <a href="landing_page.html"> <!-- Replace "landing_page.html" with the actual landing page URL -->
+                <h1>STYLACT</h1> <!-- Main title of the website -->
             </a>
         </div>
         <nav>
+            <!-- Navigation menu with links to different sections -->
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Products</a></li>
-                <li><a href="#">Cart</a></li>
-                <li><a href="#" id="logout">Logout</a></li>
+                <li><a href="#">Home</a></li> <!-- Link to home page -->
+                <li><a href="#">Products</a></li> <!-- Link to products page -->
+                <li><a href="#">Cart</a></li> <!-- Link to cart page -->
+                <li><a href="#" id="logout">Logout</a></li> <!-- Link for logging out -->
             </ul>
         </nav>
     </header>
 
+    <!-- Main content area of the page -->
     <main id="main-content" class="main-dashboard">
-        <h2>Welcome to the Store!</h2>
-        <p>Here you can browse our products and make purchases.</p>
-        <h3>Products</h3>
+        <h2>Welcome to the Store!</h2> <!-- Welcome message -->
+        <p>Here you can browse our products and make purchases.</p> <!-- Description for users -->
+        <h3>Products</h3> <!-- Section header for products -->
         <div class="main-content">
+            <!-- Individual product card 1 -->
             <div class="product-card">
-                <img src="placeholder.png" alt="Product Image">
-                <h4>Product Name</h4>
-                <p>Description of the product.</p>
-                <button>Manage Product</button>
+                <img src="placeholder.png" alt="Product Image"> <!-- Placeholder image for product -->
+                <h4>Product Name</h4> <!-- Title of the product -->
+                <p>Description of the product.</p> <!-- Brief description of the product -->
+                <button>Manage Product</button> <!-- Button to manage the product (e.g., edit, delete) -->
             </div>
+            <!-- Individual product card 2 -->
             <div class="product-card">
-                <img src="placeholder.png" alt="Product Image">
-                <h4>Product Name</h4>
-                <p>Description of the product.</p>
-                <button>Manage Product</button>
+                <img src="placeholder.png" alt="Product Image"> <!-- Placeholder image for product -->
+                <h4>Product Name</h4> <!-- Title of the product -->
+                <p>Description of the product.</p> <!-- Brief description of the product -->
+                <button>Manage Product</button> <!-- Button to manage the product (e.g., edit, delete) -->
             </div>
         </div>
     </main>
 
+    <!-- Footer section containing copyright information -->
     <footer>
-        <p>&copy; 2024 Stylact Store. All Rights Reserved.</p>
+        <p>&copy; 2024 Stylact Store. All Rights Reserved.</p> <!-- Copyright notice -->
     </footer>
 
+    <!-- Link to the external JavaScript file for interactivity -->
     <script src="scripts.js"></script>
 </body>
 </html>

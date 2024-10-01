@@ -501,7 +501,6 @@ main {
     display: flex;
     flex-wrap: wrap; /* Allow wrapping to the next line when needed */
     justify-content: center; /* Center the product cards */
-    flex-direction: row; /* Column direction for vertical stacking */
     align-items: center;
 }
 
@@ -545,6 +544,40 @@ main {
 }
 
 #customers-table th {
+    padding: 10px 20px; /* Same padding for headers */
+}
+
+#view-admins-container {
+    display: flex;
+    flex-direction: column; /* Stack the button and the admin list vertically */
+    align-items: center; /* Align them to the start (left) */
+}
+
+.view-admins-btn {
+    padding: 15px 25px; /* Increased padding for larger clickable area */
+    border-radius: 5px;
+    cursor: pointer; /* Change cursor to pointer on hover */
+    font-size: 16px; /* Adjust font size to match original style */
+}
+
+.view-admins {
+    width: 100%; /* Make the admin section take the full width */
+}
+
+.admins-table {
+    width: 100%; /* Make the table take full width of its container */
+    border-collapse: collapse;
+}
+
+#admins-table td {
+    padding: 10px 20px; /* Increase padding */
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden; /* Hide overflowed text */
+    text-overflow: ellipsis; /* Add ellipsis (...) for overflowed text */
+    max-width: 100vw; /* Limit the width of each cell */
+}
+
+#admins-table th {
     padding: 10px 20px; /* Same padding for headers */
 }
 

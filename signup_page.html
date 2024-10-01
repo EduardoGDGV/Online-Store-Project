@@ -1,49 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Meta tags for character encoding and responsive design -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title of the page that appears on the browser tab -->
     <title>Signup - Online Store</title>
+    <!-- Google font for the "visibility" icon in the password fields -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <!-- Link to external CSS for page styling -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Main container for the signup section -->
     <div class="signup-section">
+        <!-- Container for the signup box where the form is located -->
         <div class="signup-box">
+            <!-- Signup form title -->
             <h2>Sign Up</h2>
+            <!-- Signup form -->
             <form id="signup-form">
+                <!-- Form group for name input -->
                 <div class="form-group">
+                    <!-- Label for name field -->
                     <label for="name">Name</label>
+                    <!-- Name input field, required for form submission -->
                     <input type="text" id="name" required>
                 </div>
+                <!-- Form group for email input -->
                 <div class="form-group">
+                    <!-- Label for email field -->
                     <label for="email">Email</label>
+                    <!-- Email input field, required for form submission -->
                     <input type="email" id="email" required>
-                    <div id="signup-error" class="error-message"></div> <!-- Error message for signup -->
+                    <!-- Error message div, shown when signup email has an issue -->
+                    <div id="signup-error" class="error-message"></div>
                 </div>
+                <!-- Form group for password input -->
                 <div class="form-group">
+                    <!-- Label for password field -->
                     <label for="password">Password</label>
+                    <!-- Wrapper to hold the password field and the toggle visibility icon -->
                     <div class="password-wrapper">
+                        <!-- Password input field, required for form submission -->
                         <input type="password" id="password" required>
+                        <!-- Icon to toggle password visibility (show/hide password) -->
                         <span id="toggle-password-signup" class="material-symbols-outlined">visibility</span>
                     </div>
                 </div>
+                <!-- Form group for confirming password input -->
                 <div class="form-group">
+                    <!-- Label for confirm password field -->
                     <label for="confirm-password">Confirm Password</label>
+                    <!-- Wrapper to hold the confirm password field and the toggle visibility icon -->
                     <div class="password-wrapper">
+                        <!-- Confirm password input field, required for form submission -->
                         <input type="password" id="confirm-password" required>
+                        <!-- Icon to toggle confirm password visibility (show/hide password) -->
                         <span id="toggle-confirm-password" class="material-symbols-outlined">visibility</span>
                     </div>
-                    <div id="password-error" class="error-message"></div> <!-- Error message for signup password -->
-                </div>                                         
+                    <!-- Error message for password mismatch or other issues -->
+                    <div id="password-error" class="error-message"></div>
+                </div>                                          
+                <!-- Submit button for signing up -->
                 <button type="submit" class="signup-btn">Sign Up</button>
             </form>
+            <!-- Link to the login page for users who already have an account -->
             <div class="login-link">
                 <p>Already have an account? <a href="login_page.html">Login here</a></p>
             </div>
         </div>
     </div>
 
+    <!-- Link to external JavaScript file for handling form validation and password visibility toggle -->
     <script src="scripts.js"></script>
 </body>
 </html>

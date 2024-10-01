@@ -147,29 +147,33 @@ window.onload = function () {
     // Show Customers functionality
     document.getElementById('view-customers-btn').addEventListener('click', showCustomers);
 
+    // Show Admins functionality
+    document.getElementById('view-admins-btn').addEventListener('click', showAdmins);
+
+    // Fetch and display customers from localStorage
     function fetchCustomers() {
         const customersBody = document.getElementById('customers-body');
-        customersBody.innerHTML = ''; // Clear the previous content
-    
+        customersBody.innerHTML = ''; // Clear previous content
+
         // Iterate over all items in localStorage
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             const storedUser = JSON.parse(localStorage.getItem(key));
-    
+
             // Check if the entry is valid and has a name and email property
             if (storedUser && storedUser.name && storedUser.email) {
                 const row = document.createElement('tr');
-    
+
                 // Create name cell
                 const nameCell = document.createElement('td');
                 nameCell.textContent = storedUser.name;
                 row.appendChild(nameCell);
-    
+
                 // Create email cell
                 const emailCell = document.createElement('td');
                 emailCell.textContent = storedUser.email;
                 row.appendChild(emailCell);
-    
+
                 // Create action cell with a delete button
                 const actionCell = document.createElement('td');
                 const deleteButton = document.createElement('button');
@@ -179,49 +183,87 @@ window.onload = function () {
                 deleteButton.addEventListener('click', () => deleteCustomer(key));
                 actionCell.appendChild(deleteButton);
                 row.appendChild(actionCell);
-    
+
                 // Append the row to the table body
                 customersBody.appendChild(row);
             }
         }
     }
-    
-    // Delete customer from localStorage
-    function deleteCustomer(key) {
-        const confirmDelete = confirm('Are you sure you want to delete this customer?');
-        if (confirmDelete) {
-            localStorage.removeItem(key); // Remove the customer from localStorage
-            fetchCustomers(); // Refresh the customer list after deletion
+
+    // Fetch and display admins from localStorage
+    function fetchAdmins() {
+        const adminsBody = document.getElementById('admins-body');
+        adminsBody.innerHTML = ''; // Clear previous content
+
+        // Iterate over all items in localStorage
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const storedAdmin = JSON.parse(localStorage.getItem(key));
+
+            // Check if the entry is valid and has a name and email property
+            if (storedAdmin && storedAdmin.role === 'admin' && storedAdmin.name && storedAdmin.email) {
+                const row = document.createElement('tr');
+
+                // Create name cell
+                const nameCell = document.createElement('td');
+                nameCell.textContent = storedAdmin.name;
+                row.appendChild(nameCell);
+
+                // Create email cell
+                const emailCell = document.createElement('td');
+                emailCell.textContent = storedAdmin.email;
+                row.appendChild(emailCell);
+
+                // Create action cell with a delete button
+                const actionCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+
+                // Logic to prevent deletion of the first admin
+                if (storedAdmin.email === "admin@example.com") {
+                    deleteButton.disabled = true; // Disable delete button for the first admin
+                    deleteButton.textContent = "Cannot Delete"; // Update button text
+                } else {
+                    deleteButton.addEventListener('click', () => deleteAdmin(key)); // Add delete event
+                }
+
+                actionCell.appendChild(deleteButton);
+                row.appendChild(actionCell);
+
+                // Append the row to the table body
+                adminsBody.appendChild(row);
+            }
         }
-    }    
+    }
 
     // Show or hide customers when button is clicked
     function showCustomers() {
-        // Hide or show other content in the admin dashboard
-        const addProduct = document.getElementById('add-product');
-        const viewReports = document.getElementById('view-reports');
-        const otherContent = document.getElementsByClassName('admin-content'); // This is a collection
         const viewCustomersSection = document.getElementById('view-customers');
         const viewCustomersBtn = document.getElementById('view-customers-btn'); // The button element
-        const productsHeading = document.querySelector('h3'); // Select the <h3> Products heading
+        const otherContent = document.getElementsByClassName('admin-content'); // This is a collection
+        const viewAdminsSection = document.getElementById('view-admins'); // Reference to the admin section
+        const adminsBtn = document.getElementById('view-admins-btn'); // Reference to the admin button
+        const productsBtn = document.getElementById('view-products'); // Reference to the products button
+        const textProd = document.getElementById('prodtitle'); // Reference to the products title
 
-        // Toggle the visibility of the customer section
-        if (viewCustomersSection && viewCustomersSection.classList.contains('hide')) {
-            // Show the customers section
-            if (otherContent.length > 0) {
-                Array.from(otherContent).forEach(function (element) {
-                    element.classList.add('hide');
-                });
+        // Toggle visibility
+        if (viewCustomersSection.classList.contains('hide')) {
+            // Hide other sections, including admins
+            if (viewAdminsSection) {
+                viewAdminsSection.classList.add('hide');
             }
-            if (viewReports) {
-                viewReports.classList.add('hide');
+            if (adminsBtn) {
+                adminsBtn.classList.add('hide');
             }
-            if (addProduct) {
-                addProduct.classList.add('hide');
+            if (productsBtn) {
+                productsBtn.classList.add('hide');
             }
-            if (productsHeading) {
-                productsHeading.classList.add('hide'); // Hide the Products heading
+            if (textProd) {
+                textProd.classList.add('hide');
             }
+            Array.from(otherContent).forEach(function (element) {
+                element.classList.add('hide');
+            });
 
             viewCustomersSection.classList.remove('hide');
             viewCustomersBtn.textContent = 'Hide Customers'; // Change button text to 'Hide Customers'
@@ -229,44 +271,86 @@ window.onload = function () {
             // Fetch customers when showing
             fetchCustomers();
 
-        } else if (viewCustomersSection) {
-            // Hide the customers section
+        } else {
             viewCustomersSection.classList.add('hide');
             viewCustomersBtn.textContent = 'View Customers'; // Change button text back to 'View Customers'
 
-            // Show the previously hidden sections
-            if (otherContent.length > 0) {
-                Array.from(otherContent).forEach(function (element) {
-                    element.classList.remove('hide');
-                });
-            }
-            if (viewReports) {
-                viewReports.classList.remove('hide');
-            }
-            if (addProduct) {
-                addProduct.classList.remove('hide');
-            }
-            if (productsHeading) {
-                productsHeading.classList.remove('hide'); // Show the Products heading again
-            }
+            adminsBtn.classList.remove('hide');
+            productsBtn.classList.remove('hide');
+            textProd.classList.remove('hide');
+
+            // Show other sections
+            Array.from(otherContent).forEach(function (element) {
+                element.classList.remove('hide');
+            });
         }
     }
 
+    // Show or hide admins when button is clicked
+    function showAdmins() {
+        const viewAdminsSection = document.getElementById('view-admins');
+        const viewAdminsBtn = document.getElementById('view-admins-btn'); // The button element
+        const otherContent = document.getElementsByClassName('admin-content'); // This is a collection
+        const viewCustomersSection = document.getElementById('view-customers'); // Reference to the customer section
+        const custoBtn = document.getElementById('view-customers-btn'); // Reference to the admin button
+        const productsBtn = document.getElementById('view-products'); // Reference to the products button
+        const textProd = document.getElementById('prodtitle'); // Reference to the products title
 
-    // Delete customer functionality
-    const customersBody = document.getElementById('customers-body');
-    if (customersBody) {
-        customersBody.addEventListener('click', function (event) {
-            if (event.target.classList.contains('delete-btn')) {
-                const customerEmail = event.target.getAttribute('data-id');
-
-                const confirmDelete = confirm('Are you sure you want to delete this customer?');
-                if (confirmDelete) {
-                    localStorage.removeItem(customerEmail); // Delete the customer from localStorage
-                    fetchCustomers(); // Refresh the customer list
-                    alert('Customer deleted successfully');
-                }
+        // Toggle visibility
+        if (viewAdminsSection.classList.contains('hide')) {
+            // Hide other sections, including customers
+            if (viewCustomersSection) {
+                viewCustomersSection.classList.add('hide');
             }
-        });
+            if (custoBtn) {
+                custoBtn.classList.add('hide');
+            }
+            if (productsBtn) {
+                productsBtn.classList.add('hide');
+            }
+            if (textProd) {
+                textProd.classList.add('hide');
+            }
+            Array.from(otherContent).forEach(function (element) {
+                element.classList.add('hide');
+            });
+
+            viewAdminsSection.classList.remove('hide');
+            viewAdminsBtn.textContent = 'Hide Admins'; // Change button text to 'Hide Admins'
+
+            // Fetch admins when showing
+            fetchAdmins();
+
+        } else {
+            custoBtn.classList.remove('hide');
+            productsBtn.classList.remove('hide');
+            textProd.classList.remove('hide');
+            viewAdminsSection.classList.add('hide');
+            viewAdminsBtn.textContent = 'View Admins'; // Change button text back to 'View Admins'
+
+            // Show other sections
+            Array.from(otherContent).forEach(function (element) {
+                element.classList.remove('hide');
+            });
+        }
     }
+
+        // Delete customer from localStorage
+        function deleteCustomer(key) {
+            const confirmDelete = confirm('Are you sure you want to delete this customer?');
+            if (confirmDelete) {
+                localStorage.removeItem(key); // Remove the customer from localStorage
+                fetchCustomers(); // Refresh the customer list after deletion
+            }
+        }
+
+        // Delete admin from localStorage
+        function deleteAdmin(key) {
+            const confirmDelete = confirm('Are you sure you want to delete this admin?');
+            if (confirmDelete) {
+                localStorage.removeItem(key); // Remove the admin from localStorage
+                fetchAdmins(); // Refresh the admin list after deletion
+            }
+        }
+
 };

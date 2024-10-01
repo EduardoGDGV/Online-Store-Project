@@ -1,33 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Character encoding for the document -->
     <meta charset="UTF-8">
+    <!-- Viewport settings for responsive design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Link to the external CSS file for styling -->
     <link rel="stylesheet" href="styles.css"> <!-- Your CSS file -->
+    <!-- Title of the admin area page -->
     <title>Admin Area</title>
 </head>
 <body>
+    <!-- Header section containing the title and navigation links -->
     <header>
-        <h1>Admin Area</h1>
+        <h1>Admin Area</h1> <!-- Main title of the admin area -->
         <nav>
             <ul>
-                <li><a href="#" id="register-admin">Register Admin</a></li>
-                <li><a href="#" id="register-customer">Register Customer</a></li>
-                <li><a href="#" id="register-product">Register Product</a></li>
-                <li><a href="#" id="logout">Logout</a></li>
+                <!-- Navigation links for various admin actions -->
+                <li><a href="#" id="register-admin">Register Admin</a></li> <!-- Link to register a new admin -->
+                <li><a href="#" id="register-customer">Register Customer</a></li> <!-- Link to register a new customer -->
+                <li><a href="#" id="register-product">Register Product</a></li> <!-- Link to register a new product -->
+                <li><a href="#" id="logout">Logout</a></li> <!-- Link for logging out -->
             </ul>
         </nav>
     </header>
     
+    <!-- Main content area of the admin dashboard -->
     <main id="admin-content" class="admin-dashboard">
         <div class="action-buttons">
-            <button id="add-product">Add Product</button>
+            <!-- Button to manage products -->
+            <button id="view-products">View Products</button>
             <div id="view-customers-container">
-                <!-- View Customers button -->
+                <!-- Button to toggle the visibility of the customer list -->
                 <button id="view-customers-btn">View Customers</button>
+                <!-- Section to display the list of registered customers -->
                 <div id="view-customers" class="hide">
-                    <h2>Registered Customers</h2>
+                    <h2>Registered Customers</h2> <!-- Header for the customer list -->
                     <table id="customers-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th> <!-- Column header for customer names -->
+                                <th>Email</th> <!-- Column header for customer emails -->
+                                <th>Action</th> <!-- Column header for action buttons -->
+                            </tr>
+                        </thead>
+                        <tbody id="customers-body"></tbody> <!-- Body where customer data will be dynamically inserted -->
+                    </table>
+                </div>
+            </div>
+            <!-- View Admins Section -->
+            <div id="view-admins-container">
+                <button class="view-admins-btn" id="view-admins-btn">View Admins</button>
+                <div id="view-admins" class="hide">
+                    <h2>Registered Admins</h2>
+                    <table id="admins-table" class="admins-table">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -35,30 +61,32 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="customers-body"></tbody>
+                        <tbody id="admins-body"></tbody>
                     </table>
                 </div>
             </div>
-            <button id="view-reports">View Reports</button>
         </div>
 
-        <h3>Products</h3>
+        <h3 id="prodtitle">Products</h3> <!-- Section header for products -->
         <div class="admin-content">
+            <!-- Individual product card for displaying product information -->
             <div class="product-card">
-                <img src="placeholder.png" alt="Product Image">
-                <h4>Product Name</h4>
-                <p>Description of the product.</p>
-                <button>Manage Product</button>
+                <img src="placeholder.png" alt="Product Image"> <!-- Placeholder image for the product -->
+                <h4>Product Name</h4> <!-- Title of the product -->
+                <p>Description of the product.</p> <!-- Brief description of the product -->
+                <button>Manage Product</button> <!-- Button to manage the product (e.g., edit, delete) -->
             </div>
+            <!-- Another product card -->
             <div class="product-card">
-                <img src="placeholder.png" alt="Product Image">
-                <h4>Product Name</h4>
-                <p>Description of the product.</p>
-                <button>Manage Product</button>
+                <img src="placeholder.png" alt="Product Image"> <!-- Placeholder image for the product -->
+                <h4>Product Name</h4> <!-- Title of the product -->
+                <p>Description of the product.</p> <!-- Brief description of the product -->
+                <button>Manage Product</button> <!-- Button to manage the product (e.g., edit, delete) -->
             </div>
         </div>
     </main>
 
+    <!-- Link to the external JavaScript file for interactivity -->
     <script src="scripts.js"></script>
 </body>
 </html>
