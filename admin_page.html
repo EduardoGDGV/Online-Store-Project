@@ -20,12 +20,25 @@
     </header>
     
     <main id="admin-content" class="admin-dashboard">
-        <h2>Welcome to the Admin Area</h2>
-        <p>Select an action from the menu above.</p>
-        
         <div class="action-buttons">
             <button id="add-product">Add Product</button>
-            <button id="view-customers">View Customers</button>
+            <div id="view-customers-container">
+                <!-- View Customers button -->
+                <button id="view-customers-btn">View Customers</button>
+                <div id="view-customers" class="hide">
+                    <h2>Registered Customers</h2>
+                    <table id="customers-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-body"></tbody>
+                    </table>
+                </div>
+            </div>
             <button id="view-reports">View Reports</button>
         </div>
 

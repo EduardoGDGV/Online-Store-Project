@@ -9,7 +9,10 @@
 <body>
     <header>
         <div class="logo">
-            <h1>My Online Store</h1>
+            <!-- Wrap the logo in an anchor tag that points to the landing page -->
+            <a href="landing_page.html"> <!-- Replace "landing-page.html" with the actual landing page URL -->
+                <h1>STYLACT</h1>
+            </a>
         </div>
         <nav>
             <ul>
@@ -21,13 +24,28 @@
         </nav>
     </header>
 
-    <main>
+    <main id="main-content" class="main-dashboard">
         <h2>Welcome to the Store!</h2>
         <p>Here you can browse our products and make purchases.</p>
+        <h3>Products</h3>
+        <div class="main-content">
+            <div class="product-card">
+                <img src="placeholder.png" alt="Product Image">
+                <h4>Product Name</h4>
+                <p>Description of the product.</p>
+                <button>Manage Product</button>
+            </div>
+            <div class="product-card">
+                <img src="placeholder.png" alt="Product Image">
+                <h4>Product Name</h4>
+                <p>Description of the product.</p>
+                <button>Manage Product</button>
+            </div>
+        </div>
     </main>
 
     <footer>
-        <p>&copy; 2024 My Online Store. All Rights Reserved.</p>
+        <p>&copy; 2024 Stylact Store. All Rights Reserved.</p>
     </footer>
 
     <script src="scripts.js"></script>

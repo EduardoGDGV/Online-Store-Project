@@ -143,4 +143,130 @@ window.onload = function () {
             window.location.href = 'login_page.html';  // Redirect to login page after logout
         });
     }
+
+    // Show Customers functionality
+    document.getElementById('view-customers-btn').addEventListener('click', showCustomers);
+
+    function fetchCustomers() {
+        const customersBody = document.getElementById('customers-body');
+        customersBody.innerHTML = ''; // Clear the previous content
+    
+        // Iterate over all items in localStorage
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const storedUser = JSON.parse(localStorage.getItem(key));
+    
+            // Check if the entry is valid and has a name and email property
+            if (storedUser && storedUser.name && storedUser.email) {
+                const row = document.createElement('tr');
+    
+                // Create name cell
+                const nameCell = document.createElement('td');
+                nameCell.textContent = storedUser.name;
+                row.appendChild(nameCell);
+    
+                // Create email cell
+                const emailCell = document.createElement('td');
+                emailCell.textContent = storedUser.email;
+                row.appendChild(emailCell);
+    
+                // Create action cell with a delete button
+                const actionCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.classList.add('delete-btn');
+                deleteButton.setAttribute('data-id', key); // Use localStorage key as identifier
+                deleteButton.addEventListener('click', () => deleteCustomer(key));
+                actionCell.appendChild(deleteButton);
+                row.appendChild(actionCell);
+    
+                // Append the row to the table body
+                customersBody.appendChild(row);
+            }
+        }
+    }
+    
+    // Delete customer from localStorage
+    function deleteCustomer(key) {
+        const confirmDelete = confirm('Are you sure you want to delete this customer?');
+        if (confirmDelete) {
+            localStorage.removeItem(key); // Remove the customer from localStorage
+            fetchCustomers(); // Refresh the customer list after deletion
+        }
+    }    
+
+    // Show or hide customers when button is clicked
+    function showCustomers() {
+        // Hide or show other content in the admin dashboard
+        const addProduct = document.getElementById('add-product');
+        const viewReports = document.getElementById('view-reports');
+        const otherContent = document.getElementsByClassName('admin-content'); // This is a collection
+        const viewCustomersSection = document.getElementById('view-customers');
+        const viewCustomersBtn = document.getElementById('view-customers-btn'); // The button element
+        const productsHeading = document.querySelector('h3'); // Select the <h3> Products heading
+
+        // Toggle the visibility of the customer section
+        if (viewCustomersSection && viewCustomersSection.classList.contains('hide')) {
+            // Show the customers section
+            if (otherContent.length > 0) {
+                Array.from(otherContent).forEach(function (element) {
+                    element.classList.add('hide');
+                });
+            }
+            if (viewReports) {
+                viewReports.classList.add('hide');
+            }
+            if (addProduct) {
+                addProduct.classList.add('hide');
+            }
+            if (productsHeading) {
+                productsHeading.classList.add('hide'); // Hide the Products heading
+            }
+
+            viewCustomersSection.classList.remove('hide');
+            viewCustomersBtn.textContent = 'Hide Customers'; // Change button text to 'Hide Customers'
+
+            // Fetch customers when showing
+            fetchCustomers();
+
+        } else if (viewCustomersSection) {
+            // Hide the customers section
+            viewCustomersSection.classList.add('hide');
+            viewCustomersBtn.textContent = 'View Customers'; // Change button text back to 'View Customers'
+
+            // Show the previously hidden sections
+            if (otherContent.length > 0) {
+                Array.from(otherContent).forEach(function (element) {
+                    element.classList.remove('hide');
+                });
+            }
+            if (viewReports) {
+                viewReports.classList.remove('hide');
+            }
+            if (addProduct) {
+                addProduct.classList.remove('hide');
+            }
+            if (productsHeading) {
+                productsHeading.classList.remove('hide'); // Show the Products heading again
+            }
+        }
+    }
+
+
+    // Delete customer functionality
+    const customersBody = document.getElementById('customers-body');
+    if (customersBody) {
+        customersBody.addEventListener('click', function (event) {
+            if (event.target.classList.contains('delete-btn')) {
+                const customerEmail = event.target.getAttribute('data-id');
+
+                const confirmDelete = confirm('Are you sure you want to delete this customer?');
+                if (confirmDelete) {
+                    localStorage.removeItem(customerEmail); // Delete the customer from localStorage
+                    fetchCustomers(); // Refresh the customer list
+                    alert('Customer deleted successfully');
+                }
+            }
+        });
+    }
 };
