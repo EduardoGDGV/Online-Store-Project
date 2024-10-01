@@ -614,3 +614,12 @@ main {
     font-size: 24px; /* Font size for subheadings */
     color: #333; /* Consistent color with headings */
 }
+
+.disabled-button {
+    background-color: lightgrey; /* Grey background */
+    color: darkgrey; /* Dark grey text */
+    border: none; /* Remove border */
+    cursor: not-allowed; /* Change cursor to indicate no action */
+    pointer-events: none; /* Disable click events */
+    transition: none; /* Disable transition for no animation */
+}

@@ -13,7 +13,12 @@
 <body>
     <!-- Header section containing the title and navigation links -->
     <header>
-        <h1>Admin Area</h1> <!-- Main title of the admin area -->
+        <div class="logo">
+            <!-- Wrap the logo in an anchor tag that points to the landing page -->
+            <a href="landing_page.html"> <!-- Replace "landing_page.html" with the actual landing page URL -->
+                <h1>ADMIN AREA</h1> <!-- Main title of the website -->
+            </a>
+        </div>
         <nav>
             <ul>
                 <!-- Navigation links for various admin actions -->
@@ -39,6 +44,7 @@
                     <table id="customers-table">
                         <thead>
                             <tr>
+                                <th>Id</th> <!-- Column header for customer ids -->
                                 <th>Name</th> <!-- Column header for customer names -->
                                 <th>Email</th> <!-- Column header for customer emails -->
                                 <th>Action</th> <!-- Column header for action buttons -->
@@ -56,6 +62,7 @@
                     <table id="admins-table" class="admins-table">
                         <thead>
                             <tr>
+                                <th>Id</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Action</th>

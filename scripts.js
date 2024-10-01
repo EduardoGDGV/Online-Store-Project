@@ -1,4 +1,17 @@
 window.onload = function () {
+    // Very secure very real implementation
+    const defaultAdmin = {
+        id: -1,
+        name: 'Default Admin',
+        email: 'admin@example.com',
+        password: 'admin', // Ensure this is stored securely in a real application
+    };
+
+    // Store the default admin in localStorage if it doesn't already exist
+    if (!localStorage.getItem(defaultAdmin.email)) {
+        localStorage.setItem(defaultAdmin.email, JSON.stringify(defaultAdmin));
+    }
+
     // Login process (with no auto-login)
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
@@ -8,18 +21,18 @@ window.onload = function () {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
             const loginError = document.getElementById('login-error');
+            const storedLocal = JSON.parse(localStorage.getItem(email));
 
             loginError.textContent = ''; // Clear previous errors
 
             try {
                 // Check for admin credentials
-                if (email === 'admin@example.com' && password === 'admin') {
+                if (storedLocal && storedLocal.id < 0) {
                     localStorage.setItem('isAdminLoggedIn', 'true'); // Set admin logged in status
                     window.location.href = 'admin_page.html'; // Redirect to admin area
                 } else {
                     // Regular user login check
-                    const storedUser = JSON.parse(localStorage.getItem(email));
-                    if (storedUser && storedUser.password === password) {
+                    if (storedLocal && storedLocal.password === password) {
                         localStorage.setItem('loggedInUser', email); // Set the logged-in user
                         window.location.href = 'main_page.html'; // Redirect to the main page after successful login
                     } else {
@@ -91,6 +104,7 @@ window.onload = function () {
                 signupError.textContent = 'Email is already in use. Please use a different one.';
             } else {
                 const user = {
+                    id: localStorage.length + 1,
                     name: name,
                     email: email,
                     password: password
@@ -158,34 +172,44 @@ window.onload = function () {
         // Iterate over all items in localStorage
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            const storedUser = JSON.parse(localStorage.getItem(key));
+            try {
+                const storedUser = JSON.parse(localStorage.getItem(key));
 
-            // Check if the entry is valid and has a name and email property
-            if (storedUser && storedUser.name && storedUser.email) {
-                const row = document.createElement('tr');
+                // Check if the entry is valid and has a name and email property
+                if (storedUser && storedUser.id >= 0 && storedUser.name && storedUser.email) {
+                    const row = document.createElement('tr');
 
-                // Create name cell
-                const nameCell = document.createElement('td');
-                nameCell.textContent = storedUser.name;
-                row.appendChild(nameCell);
+                    // Create id cell
+                    const idCell = document.createElement('td');
+                    idCell.textContent = storedUser.id;
+                    row.appendChild(idCell);
 
-                // Create email cell
-                const emailCell = document.createElement('td');
-                emailCell.textContent = storedUser.email;
-                row.appendChild(emailCell);
+                    // Create name cell
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = storedUser.name;
+                    row.appendChild(nameCell);
 
-                // Create action cell with a delete button
-                const actionCell = document.createElement('td');
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Delete';
-                deleteButton.classList.add('delete-btn');
-                deleteButton.setAttribute('data-id', key); // Use localStorage key as identifier
-                deleteButton.addEventListener('click', () => deleteCustomer(key));
-                actionCell.appendChild(deleteButton);
-                row.appendChild(actionCell);
+                    // Create email cell
+                    const emailCell = document.createElement('td');
+                    emailCell.textContent = storedUser.email;
+                    row.appendChild(emailCell);
 
-                // Append the row to the table body
-                customersBody.appendChild(row);
+                    // Create action cell with a delete button
+                    const actionCell = document.createElement('td');
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.classList.add('delete-btn');
+                    deleteButton.setAttribute('data-id', key); // Use localStorage key as identifier
+                    deleteButton.addEventListener('click', () => deleteCustomer(key));
+                    actionCell.appendChild(deleteButton);
+                    row.appendChild(actionCell);
+
+                    // Append the row to the table body
+                    customersBody.appendChild(row);
+                }
+            } catch (error) {
+                console.warn(`Skipping non-JSON or invalid entry at key "${key}"`);
+                // Skip over entries that are not valid JSON
             }
         }
     }
@@ -198,41 +222,60 @@ window.onload = function () {
         // Iterate over all items in localStorage
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            const storedAdmin = JSON.parse(localStorage.getItem(key));
+            try {
+                const storedAdmin = JSON.parse(localStorage.getItem(key)); // Attempt to parse the value
+    
+                // Check if parsedValue is an object and has the expected properties
+                if (storedAdmin && storedAdmin.id < 0 && storedAdmin.name && storedAdmin.email) {
+                    // Check if the entry is an admin
+                    const row = document.createElement('tr');
 
-            // Check if the entry is valid and has a name and email property
-            if (storedAdmin && storedAdmin.role === 'admin' && storedAdmin.name && storedAdmin.email) {
-                const row = document.createElement('tr');
+                    // Create name cell
+                    const idCell = document.createElement('td');
+                    idCell.textContent = -storedAdmin.id;
+                    row.appendChild(idCell);
 
-                // Create name cell
-                const nameCell = document.createElement('td');
-                nameCell.textContent = storedAdmin.name;
-                row.appendChild(nameCell);
+                    // Create name cell
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = storedAdmin.name;
+                    row.appendChild(nameCell);
 
-                // Create email cell
-                const emailCell = document.createElement('td');
-                emailCell.textContent = storedAdmin.email;
-                row.appendChild(emailCell);
+                    // Create email cell
+                    const emailCell = document.createElement('td');
+                    emailCell.textContent = storedAdmin.email;
+                    row.appendChild(emailCell);
 
-                // Create action cell with a delete button
-                const actionCell = document.createElement('td');
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Delete';
+                    // Create action cell with a delete button
+                    const actionCell = document.createElement('td');
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
 
-                // Logic to prevent deletion of the first admin
-                if (storedAdmin.email === "admin@example.com") {
-                    deleteButton.disabled = true; // Disable delete button for the first admin
-                    deleteButton.textContent = "Cannot Delete"; // Update button text
-                } else {
-                    deleteButton.addEventListener('click', () => deleteAdmin(key)); // Add delete event
+                    // Logic to prevent deletion of the first admin
+                    if (storedAdmin.email === "admin@example.com") {
+                        deleteButton.disabled = true; // Disable delete button for the first admin
+                        deleteButton.textContent = "Cannot Delete"; // Update button text
+
+                        // Add classes for styling
+                        deleteButton.classList.add('disabled-button'); // Add a class for custom styles
+                        deleteButton.style.backgroundColor = 'lightgrey'; // Set background color to light grey
+                        deleteButton.style.color = 'darkgrey'; // Set text color to dark grey
+                        deleteButton.style.border = 'none'; // Remove border
+                        deleteButton.style.cursor = 'not-allowed'; // Change cursor to indicate no action
+                    } else {
+                        deleteButton.addEventListener('click', () => deleteAdmin(key)); // Add delete event
+                    }
+
+                    actionCell.appendChild(deleteButton);
+                    row.appendChild(actionCell);
+
+                    // Append the row to the table body
+                    adminsBody.appendChild(row);
                 }
-
-                actionCell.appendChild(deleteButton);
-                row.appendChild(actionCell);
-
-                // Append the row to the table body
-                adminsBody.appendChild(row);
+            } catch (error) {
+                console.warn(`Skipping non-JSON or invalid entry at key "${key}"`);
+                // Skip over entries that are not valid JSON
             }
+
         }
     }
 
