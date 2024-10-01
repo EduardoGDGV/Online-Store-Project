@@ -148,13 +148,32 @@ window.onload = function () {
         });
     }
 
+    // Handle profile photo change
+    document.getElementById('upload-photo').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profile-pic').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Handle form submission (save changes)
+    document.getElementById('profile-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        // You can implement form validation or save the data to the server here
+        alert('Profile updated successfully!');
+    });
+
     // Logout process (optional, but included if needed)
     const logoutButton = document.getElementById('logout');
     if (logoutButton) {
         logoutButton.addEventListener('click', function () {
             localStorage.removeItem('loggedInUser'); // Remove the logged-in user
             localStorage.removeItem('isAdminLoggedIn'); // Remove admin logged in status
-            window.location.href = 'login_page.html';  // Redirect to login page after logout
+            window.location.href = 'landing_page.html';  // Redirect to login page after logout
         });
     }
 

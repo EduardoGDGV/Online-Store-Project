@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Profile Section -->
+    <div class="profile-section">
+        <div class="profile-box">
+            <h2>My Profile</h2>
+
+            <!-- Profile Photo Section -->
+            <div class="profile-photo">
+                <img id="profile-pic" src="default-avatar.png" alt="Profile Picture">
+                <a href=""><input type="file" id="upload-photo" accept="image/*"></a>
+            </div>
+
+            <!-- Form to Edit User Information -->
+            <form id="profile-form">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" value="">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" value="">
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" value="">
+                </div>
+
+                <div class="form-group">
+                    <label for="number">Phone Number</label>
+                    <input type="text" id="number" value="">
+                </div>
+            </form>
+            <div class="button-group">
+                <button type="submit" class="save-btn">Save Changes</button>
+                <button id="logout" class="logout">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
