@@ -43,16 +43,15 @@ This project implements a functional e-commerce store that allows users to brows
 
 ### Data Storage
 The following information will be saved on the server:
-- User account details (name, email, password)
-- Product information (name, description, price, stock)
-- Order details (products, quantities, user information)
+- User account details (id, name, email, address, phone, password)
+- Admin account details (id, name, email, phone, password)
+- Product information (name, photo, description, price, stock, quantity sold)
 
 ---
 
 ## Comments About the Code
-- The code is organized into separate modules for user management, product management, and order processing.
+- The code is organized into multiple pages, separated into modules for user management, product management, and order processing.
 - Inline comments have been added to complex functions for clarity.
-- Follow the naming conventions for variables and functions to enhance readability.
 
 ---
 
@@ -60,7 +59,6 @@ The following information will be saved on the server:
 We will conduct the following tests to ensure functionality:
 - **Unit Tests:** Each function will be tested individually to verify correctness.
 - **Integration Tests:** Test interactions between modules (e.g., user login and product browsing).
-- **User Acceptance Testing:** Gather feedback from users to ensure the app meets their needs.
 
 **Testing Tools:** We plan to use [JUnit](https://junit.org/) for unit tests and [Postman](https://www.postman.com/) for testing the backend API.
 
@@ -68,7 +66,6 @@ We will conduct the following tests to ensure functionality:
 
 ## Test Results
 *To be filled after conducting tests.*  
-We will document any issues encountered during testing and confirm the expected outcomes.
 
 ---
 
