@@ -418,6 +418,7 @@ window.onload = function () {
     // Sample structure of cart items (if stored in localStorage)
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
 
+    
     // Function to render cart items on the page
     function renderCartItems() {
         const cartItemsContainer = document.getElementById('cart-items');
