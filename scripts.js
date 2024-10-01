@@ -397,22 +397,69 @@ window.onload = function () {
         }
     }
 
-        // Delete customer from localStorage
-        function deleteCustomer(key) {
-            const confirmDelete = confirm('Are you sure you want to delete this customer?');
-            if (confirmDelete) {
-                localStorage.removeItem(key); // Remove the customer from localStorage
-                fetchCustomers(); // Refresh the customer list after deletion
-            }
+    // Delete customer from localStorage
+    function deleteCustomer(key) {
+        const confirmDelete = confirm('Are you sure you want to delete this customer?');
+        if (confirmDelete) {
+            localStorage.removeItem(key); // Remove the customer from localStorage
+            fetchCustomers(); // Refresh the customer list after deletion
         }
+    }
 
-        // Delete admin from localStorage
-        function deleteAdmin(key) {
-            const confirmDelete = confirm('Are you sure you want to delete this admin?');
-            if (confirmDelete) {
-                localStorage.removeItem(key); // Remove the admin from localStorage
-                fetchAdmins(); // Refresh the admin list after deletion
-            }
+    // Delete admin from localStorage
+    function deleteAdmin(key) {
+        const confirmDelete = confirm('Are you sure you want to delete this admin?');
+        if (confirmDelete) {
+            localStorage.removeItem(key); // Remove the admin from localStorage
+            fetchAdmins(); // Refresh the admin list after deletion
         }
+    }
 
+    // Sample structure of cart items (if stored in localStorage)
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Function to render cart items on the page
+    function renderCartItems() {
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotalElement = document.getElementById('cart-total');
+        let cartTotal = 0;
+
+        // Clear the container before rendering
+        cartItemsContainer.innerHTML = '';
+
+        // Loop through cart items and display them
+        cartItems.forEach((item, index) => {
+            const cartItem = document.createElement('div');
+            cartItem.classList.add('cart-item');
+
+            cartItem.innerHTML = `
+                <img src="${item.image}" alt="${item.name}">
+                <div class="cart-item-details">
+                    <h4>${item.name}</h4>
+                    <p>Quantity: ${item.quantity}</p>
+                </div>
+                <p class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</p>
+            `;
+
+            cartItemsContainer.appendChild(cartItem);
+
+            // Calculate the total
+            cartTotal += item.price * item.quantity;
+        });
+
+        // Update the cart total
+        cartTotalElement.innerText = cartTotal.toFixed(2);
+    }
+
+    // Redirect to payment page
+    document.getElementById('proceed-to-payment').addEventListener('click', () => {
+        if (cartItems.length > 0) {
+            window.location.href = 'payment_page.html';  // Redirect to payment page
+        } else {
+            alert('Your cart is empty.');
+        }
+    });
+
+    // Initialize cart items on page load
+    document.addEventListener('DOMContentLoaded', renderCartItems);
 };
