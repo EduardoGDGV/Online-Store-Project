@@ -3,8 +3,7 @@
 ## Group 4
 **Group Members:**
 - Eduardo Garcia de Gáspari Valdejão, 11795676
-- Name 2, USP Number 2
-
+- Didrick Chancel Egnina Ndombi, 14822368
 ---
 
 ## Requirements
