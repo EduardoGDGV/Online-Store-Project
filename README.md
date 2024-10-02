@@ -56,6 +56,7 @@ The following information will be saved on the server:
 ```bash
 email: admin@example.com
 password: admin
+```
 
 ---
 
