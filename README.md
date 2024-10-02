@@ -52,6 +52,10 @@ The following information will be saved on the server:
 ## Comments About the Code
 - The code is organized into multiple pages, separated into modules for user management, product management, and order processing.
 - Inline comments have been added to complex functions for clarity.
+- To enter as the default admin Login with the following credentials
+```bash
+email: admin@example.com
+password: admin
 
 ---
 
