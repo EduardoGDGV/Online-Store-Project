@@ -33,7 +33,7 @@ This project implements a functional e-commerce store that allows users to brows
 4. **Order Management:** Users can view their order history and track orders.
 
 ### Navigation Diagram
-![Mockup1 Diagram]([https://drive.google.com/file/d/1sj1L780ESq8qxIO5HB9NrLYDcKbaCl84/view?usp=sharing])
+![Mockup1 Diagram](https://drive.google.com/file/d/1sj1L780ESq8qxIO5HB9NrLYDcKbaCl84/view?usp=sharing)
 
 ### Screen Mockups
 - [Mockup1](https://marvelapp.com/whiteboard/nPB1tfnLTApB8c8Luxut)
