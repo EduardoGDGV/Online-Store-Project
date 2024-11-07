@@ -1,0 +1,80 @@
+/* Landing Page Header (Login/Sign Up Links) */
+.landing-header {
+    background: none;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    z-index: 100;
+}
+
+.landing-header nav ul {
+    display: flex;
+    gap: 20px;
+}
+
+.landing-header nav ul li a {
+    font-size: 16px;
+    padding: 10px;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.landing-header nav ul li a:hover {
+    color: #dcdcdc;
+}
+
+/* Landing Page Content */
+.landing-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('background1.png'); /* Path to the image */
+    background-size: cover; /* Ensure the image covers the entire area */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-position: center; /* Center the image */
+    color: white;
+    text-align: center;
+}
+
+.landing-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Black overlay with 50% opacity */
+    z-index: 1; /* Place it below the text */
+}
+
+.landing-content {
+    position: relative; /* Make sure the content is on top of the overlay */
+    z-index: 2; /* Higher than the overlay */
+    align-items: center;
+}
+
+.landing-content h1 {
+    font-size: 60px;
+    margin-bottom: 300px;
+    letter-spacing: 1.5px;
+}
+
+.landing-content .btn {
+    background-color: white;
+    opacity: 90%;
+    padding: 15px 30px;
+    font-size: 24px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.landing-content .btn:hover {
+    color: #0056b3;
+}
