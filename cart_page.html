@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="styles/general_style.css">
 </head>
 <body>
-    <!-- Header section for navigation and branding -->
+    <!-- Header section containing the logo and navigation menu -->
     <header>
         <div class="logo">
             <a href="landing_page.html">
@@ -18,71 +18,44 @@
         </div>
         <nav>
             <ul>
-                <li><a href="main_page.html">
-                    <span class="material-symbols-outlined" id="material4">home</span>
-                </a></li>
-                <li><a href="cart_page.html">
-                    <span class="material-symbols-outlined" id="material2">shopping_cart</span>
-                </a></li>
-                <li><a href="profile_page.html">
-                    <span class="material-symbols-outlined" id="material3">account_circle</span>
-                </a></li>
+                <li><a href="main_page.html"><span class="material-symbols-outlined" id="material4">home</span></a></li>
+                <li><a href="cart_page.html"><span class="material-symbols-outlined" id="material2">shopping_cart</span></a></li>
+                <li><a href="profile_page.html"><span class="material-symbols-outlined" id="material3">account_circle</span></a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Main cart content -->
-    <main class="container">
+    <div class="container">
         <h1>Shopping Cart</h1>
 
-        <!-- Empty cart message -->
-        <div class="empty-cart">
-            <p>Your cart is empty.</p>
-            <a href="main_page.html" class="continue-shopping-btn">Continue Shopping</a>
-        </div>
-
-        <!-- Cart table when items are present -->
+        <!-- Cart table for items -->
         <table class="cart-table">
             <thead>
                 <tr>
                     <th>Product</th>
                     <th>Price</th>
+                    <th>Quantity</th>
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr class="cart-item">
-                    <td class="cart-item-details">
-                        <img src="product-sample.jpg" alt="Sample Product">
-                        <span class="cart-item-name">Basic T-Shirt</span>
-                    </td>
-                    <td class="cart-item-price">$19.99</td>
-                    <td><span class="remove-item">Remove</span></td>
-                </tr>
-
-                <tr class="cart-item">
-                    <td class="cart-item-details">
-                        <img src="product-sample.jpg" alt="Sample Product">
-                        <span class="cart-item-name">Skinny Jeans</span>
-                    </td>
-                    <td class="cart-item-price">$29.99</td>
-                    <td><span class="remove-item">Remove</span></td>
-                </tr>
-
-                <!-- Additional products can be listed here -->
+            <tbody id="cart-items">
+                <!-- Cart items will be dynamically inserted here -->
             </tbody>
         </table>
 
-        <!-- Total and checkout section -->
-        <div class="total">
-            <p>Total: $49.98</p>
-            <a href="payment_page.html" class="checkout-btn">Proceed to Payment</a>
+        <!-- Total and Checkout -->
+        <div class="total" id="cart-total">
+            <!-- Total price will be displayed here -->
         </div>
-    </main>
+        <div>
+            <a href="payment_page.html" class="checkout-btn">Proceed to Checkout</a>
+        </div>
+    </div>
 
-    <!-- Footer -->
     <footer>
         <p>&copy; 2024 Stylact Store. All Rights Reserved.</p>
     </footer>
+
+    <script src="scripts/cart_script.js"></script>
 </body>
 </html>
