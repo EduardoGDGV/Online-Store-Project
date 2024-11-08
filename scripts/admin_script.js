@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (registerCustomer) {
         registerCustomer.addEventListener('click', function() {
-            // Dynamically create the Register Customer form
             createRegisterCustomerForm();
         });
     }
@@ -36,19 +35,19 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if (viewCustomersBtn){
+    if (viewCustomersBtn) {
         viewCustomersBtn.addEventListener('click', function() {
             createCustomerTable();
         });
     }
 
-    if (viewAdminsBtn){
+    if (viewAdminsBtn) {
         viewAdminsBtn.addEventListener('click', function() {
             createAdminsTable();
         });
     }
 
-    if (viewProductsBtn){
+    if (viewProductsBtn) {
         viewProductsBtn.addEventListener('click', function() {
             createProductsTable();
         });
@@ -56,31 +55,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to get the next available ID for a specific prefix
     function getNextId(prefix) {
-        let highestId = 0; // Default ID to start from 0
+        let highestId = 0;
 
-        // Loop through all entries in localStorage
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             try {
                 const storedItem = JSON.parse(localStorage.getItem(key));
-
-                // Check if the key starts with the prefix and the ID is valid
                 if (key.startsWith(prefix) && storedItem && storedItem.id) {
-                    highestId = Math.max(highestId, storedItem.id); // Get the highest ID for that prefix
+                    highestId = Math.max(highestId, storedItem.id);
                 }
             } catch (error) {
                 console.warn(`Skipping non-JSON or invalid entry at key "${key}"`);
             }
         }
-
-        // Return the next available ID
         return highestId + 1;
     }
 
     // Fetch and display customers
-    function createCustomerTable(){
+    function createCustomerTable() {
         const mainContent = document.getElementById('admin-content');
-        mainContent.innerHTML = ''; // Clear current content
+        mainContent.innerHTML = '';
 
         const customersSection = document.createElement('div');
         customersSection.innerHTML = `
@@ -89,8 +83,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 <thead>
                     <tr>
                         <th>Id</th>
+                        <th>Profile Picture</th>
                         <th>Name</th>
                         <th>Email</th>
+                        <th>Address</th>
+                        <th>Phone</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -98,13 +95,12 @@ document.addEventListener('DOMContentLoaded', function () {
             </table>
         `;
         mainContent.appendChild(customersSection);
-        fetchCustomers(); // Populate customer data
+        fetchCustomers();
     }
 
-    // Fetch and display customers from localStorage
     function fetchCustomers() {
         const customersBody = document.getElementById('customers-body');
-        customersBody.innerHTML = ''; // Clear previous content
+        customersBody.innerHTML = '';
 
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
@@ -112,23 +108,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 const storedUser = JSON.parse(localStorage.getItem(key));
                 if (storedUser && storedUser.id >= 0 && storedUser.name && storedUser.email) {
                     const row = document.createElement('tr');
-                    const idCell = document.createElement('td');
-                    idCell.textContent = storedUser.id;
-                    row.appendChild(idCell);
-                    const nameCell = document.createElement('td');
-                    nameCell.textContent = storedUser.name;
-                    row.appendChild(nameCell);
-                    const emailCell = document.createElement('td');
-                    emailCell.textContent = storedUser.email;
-                    row.appendChild(emailCell);
-                    const actionCell = document.createElement('td');
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'Delete';
-                    deleteButton.classList.add('delete-btn');
-                    deleteButton.setAttribute('data-id', key);
-                    deleteButton.addEventListener('click', () => deleteCustomer(key));
-                    actionCell.appendChild(deleteButton);
-                    row.appendChild(actionCell);
+                    row.innerHTML = `
+                        <td>${storedUser.id}</td>
+                        <td><img src="${storedUser.profilePic || 'default-placeholder.png'}" alt="Profile Picture" width="50" height="50"></td>
+                        <td>${storedUser.name}</td>
+                        <td>${storedUser.email}</td>
+                        <td>${storedUser.address || ''}</td>
+                        <td>${storedUser.phone || ''}</td>
+                        <td>
+                            <button class="delete-btn" data-id="${key}">Delete</button>
+                        </td>
+                    `;
+                    row.querySelector('.delete-btn').addEventListener('click', () => deleteCustomer(key));
                     customersBody.appendChild(row);
                 }
             } catch (error) {
@@ -137,19 +128,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Delete customer from localStorage
     function deleteCustomer(key) {
-        const confirmDelete = confirm('Are you sure you want to delete this customer?');
-        if (confirmDelete) {
+        if (confirm('Are you sure you want to delete this customer?')) {
             localStorage.removeItem(key);
-            fetchCustomers(); // Refresh customer list after deletion
+            fetchCustomers();
         }
     }
 
     // Fetch and display admins
     function createAdminsTable() {
         const mainContent = document.getElementById('admin-content');
-        mainContent.innerHTML = ''; // Clear current content
+        mainContent.innerHTML = '';
 
         const adminsSection = document.createElement('div');
         adminsSection.innerHTML = `
@@ -158,8 +147,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 <thead>
                     <tr>
                         <th>Id</th>
+                        <th>Profile Picture</th>
                         <th>Name</th>
                         <th>Email</th>
+                        <th>Address</th>
+                        <th>Phone</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -167,13 +159,12 @@ document.addEventListener('DOMContentLoaded', function () {
             </table>
         `;
         mainContent.appendChild(adminsSection);
-        fetchAdmins(); // Populate admin data
+        fetchAdmins();
     }
 
-    // Fetch and display admins from localStorage
     function fetchAdmins() {
         const adminsBody = document.getElementById('admins-body');
-        adminsBody.innerHTML = ''; // Clear previous content
+        adminsBody.innerHTML = '';
 
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
@@ -181,28 +172,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 const storedAdmin = JSON.parse(localStorage.getItem(key));
                 if (storedAdmin && storedAdmin.id < 0 && storedAdmin.name && storedAdmin.email) {
                     const row = document.createElement('tr');
-                    const idCell = document.createElement('td');
-                    idCell.textContent = -storedAdmin.id;
-                    row.appendChild(idCell);
-                    const nameCell = document.createElement('td');
-                    nameCell.textContent = storedAdmin.name;
-                    row.appendChild(nameCell);
-                    const emailCell = document.createElement('td');
-                    emailCell.textContent = storedAdmin.email;
-                    row.appendChild(emailCell);
-                    const actionCell = document.createElement('td');
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'Delete';
-                    deleteButton.classList.add('delete-btn');
-                    deleteButton.setAttribute('data-id', key);
-                    if (storedAdmin.email === "admin@example.com") {
-                        deleteButton.disabled = true;
-                        deleteButton.textContent = "Cannot Delete";
-                    } else {
-                        deleteButton.addEventListener('click', () => deleteAdmin(key));
+                    row.innerHTML = `
+                        <td>${-storedAdmin.id}</td>
+                        <td><img src="${storedAdmin.profilePic || 'default-placeholder.png'}" alt="Profile Picture" width="50" height="50"></td>
+                        <td>${storedAdmin.name}</td>
+                        <td>${storedAdmin.email}</td>
+                        <td>${storedAdmin.address || ''}</td>
+                        <td>${storedAdmin.phone || ''}</td>
+                        <td>
+                            <button class="delete-btn" data-id="${key}" ${storedAdmin.email === 'admin@example.com' ? 'disabled' : ''}>
+                                ${storedAdmin.email === 'admin@example.com' ? 'Cannot Delete' : 'Delete'}
+                            </button>
+                        </td>
+                    `;
+                    if (storedAdmin.email !== 'admin@example.com') {
+                        row.querySelector('.delete-btn').addEventListener('click', () => deleteAdmin(key));
                     }
-                    actionCell.appendChild(deleteButton);
-                    row.appendChild(actionCell);
                     adminsBody.appendChild(row);
                 }
             } catch (error) {
@@ -211,15 +196,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Delete admin from localStorage
     function deleteAdmin(key) {
-        const confirmDelete = confirm('Are you sure you want to delete this admin?');
-        if (confirmDelete) {
+        if (confirm('Are you sure you want to delete this admin?')) {
             localStorage.removeItem(key);
-            fetchAdmins(); // Refresh admin list after deletion
+            fetchAdmins();
         }
     }
-
+    
     // Create and display the Products table
     function createProductsTable() {
         const mainContent = document.getElementById('admin-content');

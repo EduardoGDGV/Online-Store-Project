@@ -25,12 +25,15 @@ window.onload = function () {
                 // Get the next available user ID based on the highest 'user_' ID stored
                 const newUserId = getNextId('user_');
 
-                // Create a new user object
+                // Create a new user object with additional fields
                 const user = {
                     id: newUserId,
                     name: name,
                     email: email,
-                    password: password
+                    password: password,
+                    profilePic: '', // Initialize as empty
+                    address: '',    // Initialize as empty
+                    phone: ''       // Initialize as empty
                 };
 
                 // Store the user in localStorage with the 'user_' prefix

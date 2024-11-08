@@ -5,6 +5,7 @@ window.onload = function () {
 function displayCartItems() {
     const cartItemsContainer = document.getElementById('cart-items');
     const cartTotalContainer = document.getElementById('cart-total');
+    const checkoutButton = document.getElementById('checkout-btn');
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
     cartItemsContainer.innerHTML = ''; // Clear any existing cart items
@@ -39,6 +40,8 @@ function displayCartItems() {
     });
 
     cartTotalContainer.innerHTML = `<p>Total: R$ ${totalPrice.toFixed(2)}</p>`;
+    checkoutButton.classList.remove('disabled'); // Ensure checkout button is enabled
+    checkoutButton.href = 'payment_page.html'; // Set link to payment page
 
     // Add remove item functionality
     document.querySelectorAll('.remove-item').forEach((button) => {
@@ -48,6 +51,23 @@ function displayCartItems() {
         });
     });
 }
+
+// Function to show error if cart is empty
+function checkCartBeforeCheckout() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    if (cart.length === 0) {
+        alert("Your cart is empty. Please add items before proceeding to checkout.");
+        return false;
+    }
+    return true;
+}
+
+// Attach the function to the checkout button's click event
+document.getElementById('checkout-btn').addEventListener('click', function(event) {
+    if (!checkCartBeforeCheckout()) {
+        event.preventDefault(); // Prevent navigation to the payment page if cart is empty
+    }
+});
 
 function removeItemFromCart(index) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
