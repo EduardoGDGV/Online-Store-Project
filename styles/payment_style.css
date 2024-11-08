@@ -1,46 +1,106 @@
-/* Payment Section */
-.payment-section {
-    padding: 40px;
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: #f9f9f9;
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
 }
 
-.payment-section h2 {
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
     text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
+    color: #333;
 }
 
-.form-group-payment {
+.payment-methods {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.payment-option {
+    flex: 1 1 calc(33% - 20px);
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.payment-option h3 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.payment-option img {
+    width: 50%;
     margin-bottom: 15px;
 }
 
-.form-group-payment label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 16px;
-}
-
-.form-group-payment input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-.payment-btn {
-    background-color: #007bff;
+.payment-option button {
+    background-color: #007BFF;
     color: white;
-    padding: 15px 30px;
-    font-size: 18px;
+    padding: 10px 20px;
+    border: none;
     border-radius: 5px;
-    text-transform: uppercase;
-    font-weight: bold;
+    font-size: 1rem;
     cursor: pointer;
 }
 
-.payment-btn:hover {
+.payment-option button:hover {
     background-color: #0056b3;
+}
+
+.installments {
+    display: none;
+    margin-top: 10px;
+}
+
+.installments select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.total-container {
+    margin-top: 30px;
+    text-align: right;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.total-container p {
+    margin-bottom: 20px;
+}
+
+.submit-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 12px 30px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    display: inline-block;
+}
+
+.submit-btn:hover {
+    background-color: #218838;
+}
+
+.payment-info {
+    margin-top: 30px;
+    font-size: 1rem;
+    color: #333;
+    text-align: center;
 }

@@ -90,3 +90,31 @@ main {
     font-size: 24px; /* Font size for subheadings */
     color: #333; /* Consistent color with headings */
 }
+
+/* Search Bar Container (initially hidden) */
+.search-bar-container {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 9.5%;
+    left: 0;
+    right: 0;
+    padding: 10px 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: max-height 0.5s ease; /* Smooth transition for dropdown */
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* Search Bar */
+.search-bar {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Toggle search bar visibility */
+.show-search-bar {
+    display: block; /* Display search bar when active */
+}
