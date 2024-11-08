@@ -1,7 +1,9 @@
 window.onload = function () {
     // Check if there is a logged-in user in localStorage
     const loggedInUser = localStorage.getItem('loggedInUser');
-    
+    const searchIcon = document.getElementById('search-icon');
+    const searchBarContainer = document.getElementById('search-bar-container');
+
     // If no user is logged in, redirect to the login page
     if (!loggedInUser) {
         window.location.href = 'login_page.html';
@@ -9,6 +11,12 @@ window.onload = function () {
     }
 
     displayProducts();
+
+    // Toggle the search bar display
+    searchIcon.addEventListener('click', function (event) {
+        event.preventDefault(); // Prevent default anchor behavior
+        searchBarContainer.classList.toggle('show-search-bar');
+    });
 };
 
 function displayProducts() {
