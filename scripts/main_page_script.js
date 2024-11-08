@@ -1,32 +1,27 @@
 window.onload = function () {
-    // Check if there is a logged-in user in localStorage
     const loggedInUser = localStorage.getItem('loggedInUser');
     const searchIcon = document.getElementById('search-icon');
     const searchBarContainer = document.getElementById('search-bar-container');
 
-    // If no user is logged in, redirect to the login page
     if (!loggedInUser) {
         window.location.href = 'login_page.html';
-        return; // Stop further execution
+        return;
     }
 
     displayProducts();
 
-    // Toggle the search bar display
     searchIcon.addEventListener('click', function (event) {
-        event.preventDefault(); // Prevent default anchor behavior
+        event.preventDefault();
         searchBarContainer.classList.toggle('show-search-bar');
     });
 };
 
 function displayProducts() {
     const mainContent = document.querySelector('.main-content');
-    mainContent.innerHTML = ''; // Clear any existing content
+    mainContent.innerHTML = '';
 
-    // Array to hold products found in localStorage
     const products = [];
 
-    // Loop through localStorage to get products
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key.startsWith('product_')) {
@@ -41,7 +36,6 @@ function displayProducts() {
         }
     }
 
-    // Display up to four products
     products.slice(0, 4).forEach((product) => {
         const productCard = document.createElement('div');
         productCard.classList.add('product-card');
@@ -50,14 +44,32 @@ function displayProducts() {
             <img src="${product.image || 'placeholder.png'}" alt="${product.name}">
             <h4>${product.name}</h4>
             <p>${product.description || 'No description available.'}</p>
-            <button>Buy R$ ${Number(product.price).toFixed(2)}</button>
+            <button class="buy-btn">Buy R$ ${Number(product.price).toFixed(2)}</button>
         `;
 
         mainContent.appendChild(productCard);
+
+        // Add event listener to the "Buy" button
+        productCard.querySelector('.buy-btn').addEventListener('click', () => addToCart(product));
     });
 
-    // If no products found, display a message
     if (products.length === 0) {
         mainContent.innerHTML = '<p>No products available at the moment.</p>';
     }
+}
+
+function addToCart(product) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Check if the product is already in the cart
+    const existingProduct = cart.find(item => item.name === product.name);
+    if (existingProduct) {
+        existingProduct.quantity += 1; // Increase quantity if already in cart
+    } else {
+        product.quantity = 1; // Set initial quantity
+        cart.push(product);
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert(`${product.name} has been added to the cart.`);
 }

@@ -1,38 +1,59 @@
 window.onload = function () {
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    displayCartItems();
+};
 
-    function renderCartItems() {
-        const cartItemsContainer = document.getElementById('cart-items');
-        const cartTotalElement = document.getElementById('cart-total');
-        let cartTotal = 0;
+function displayCartItems() {
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartTotalContainer = document.getElementById('cart-total');
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-        cartItemsContainer.innerHTML = '';
+    cartItemsContainer.innerHTML = ''; // Clear any existing cart items
 
-        cartItems.forEach((item) => {
-            const cartItem = document.createElement('div');
-            cartItem.classList.add('cart-item');
-            cartItem.innerHTML = `
-                <img src="${item.image}" alt="${item.name}">
-                <div class="cart-item-details">
-                    <h4>${item.name}</h4>
-                    <p>Quantity: ${item.quantity}</p>
-                </div>
-                <p class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</p>
-            `;
-            cartItemsContainer.appendChild(cartItem);
-            cartTotal += item.price * item.quantity;
-        });
-
-        cartTotalElement.innerText = cartTotal.toFixed(2);
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<tr><td colspan="4">Your cart is empty.</td></tr>';
+        cartTotalContainer.innerHTML = '';
+        return;
     }
 
-    document.getElementById('proceed-to-payment').addEventListener('click', () => {
-        if (cartItems.length > 0) {
-            window.location.href = 'payment_page.html';
-        } else {
-            alert('Your cart is empty.');
-        }
+    let totalPrice = 0;
+
+    cart.forEach((product, index) => {
+        const productRow = document.createElement('tr');
+        productRow.classList.add('cart-item');
+
+        productRow.innerHTML = `
+            <td class="cart-item-details">
+                <img src="${product.image || 'placeholder.png'}" alt="${product.name}">
+                <span class="cart-item-name">${product.name}</span>
+            </td>
+            <td class="cart-item-price">R$ ${Number(product.price).toFixed(2)}</td>
+            <td class="cart-item-quantity">
+                <span>${product.quantity}</span>
+            </td>
+            <td><span class="remove-item" data-index="${index}">Remove</span></td>
+        `;
+
+        cartItemsContainer.appendChild(productRow);
+
+        totalPrice += product.price * product.quantity;
     });
 
-    renderCartItems();
-};
+    cartTotalContainer.innerHTML = `<p>Total: R$ ${totalPrice.toFixed(2)}</p>`;
+
+    // Add remove item functionality
+    document.querySelectorAll('.remove-item').forEach((button) => {
+        button.addEventListener('click', function () {
+            const itemIndex = this.getAttribute('data-index');
+            removeItemFromCart(itemIndex);
+        });
+    });
+}
+
+function removeItemFromCart(index) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    cart.splice(index, 1); // Remove the item at the specified index
+    localStorage.setItem('cart', JSON.stringify(cart)); // Update cart in localStorage
+
+    displayCartItems(); // Refresh the cart display
+}
