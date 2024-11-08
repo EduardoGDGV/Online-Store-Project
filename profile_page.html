@@ -9,45 +9,33 @@
     <link rel="stylesheet" href="styles/general_style.css">
 </head>
 <body>
+    <!-- Header section containing the logo and navigation menu -->
+    <header>
+        <div class="logo">
+            <a href="landing_page.html">
+                <h1>STYLACT</h1>
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="main_page.html"><span class="material-symbols-outlined" id="material4">home</span></a></li>
+                <li><a href="cart_page.html"><span class="material-symbols-outlined" id="material2">shopping_cart</span></a></li>
+                <li><a href="profile_page.html"><span class="material-symbols-outlined" id="material3">account_circle</span></a></li>
+            </ul>
+        </nav>
+    </header>
+
     <!-- Profile Section -->
     <div class="profile-section">
         <div class="profile-box">
-            <h2>My Profile</h2>
-
-            <!-- Profile Photo Section -->
-            <div class="profile-photo">
-                <img id="profile-pic" src="default-avatar.png" alt="Profile Picture">
-                <a href=""><input type="file" id="upload-photo" accept="image/*"></a>
-            </div>
-
-            <!-- Form to Edit User Information -->
-            <form id="profile-form">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" value="">
-                </div>
-
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" value="">
-                </div>
-
-                <div class="form-group">
-                    <label for="address">Address</label>
-                    <input type="text" id="address" value="">
-                </div>
-
-                <div class="form-group">
-                    <label for="number">Phone Number</label>
-                    <input type="text" id="number" value="">
-                </div>
-            </form>
             <div class="button-group">
-                <button type="submit" class="save-btn">Save Changes</button>
-                <button id="logout" class="logout">Logout</button>
             </div>
         </div>
     </div>
+
+    <footer>
+        <p>&copy; 2024 Stylact Store. All Rights Reserved.</p>
+    </footer>
 
     <script src="scripts/profile_script.js"></script>
 </body>
