@@ -3,7 +3,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    padding: 20px;
     background-color: #f4f4f4;
 }
 
@@ -15,6 +16,7 @@
     width: 100%;
     max-width: 500px;
     text-align: center;
+    box-sizing: border-box;
 }
 
 .profile-box h2 {
@@ -23,6 +25,14 @@
     color: #333;
 }
 
+/* Profile Info Display */
+#profile-info-display p {
+    font-size: 18px;
+    color: #555;
+    margin: 8px 0;
+}
+
+/* Profile Photo Section */
 .profile-photo {
     margin-bottom: 20px;
 }
@@ -32,12 +42,14 @@
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
+    border: 3px solid #ddd;
 }
 
 #upload-photo {
     display: none; /* Hide the file input field */
 }
 
+/* Form Groups */
 .form-group {
     margin-bottom: 15px;
     text-align: left;
@@ -56,44 +68,64 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* Buttons */
+.save-btn, .cancel-btn, .edit-btn, .logout {
+    width: 48%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
 }
 
 .save-btn {
-    width: 40%;
-    padding: 15px;
     background-color: #28a745;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    margin-top: 10px;
 }
 
 .save-btn:hover {
     background-color: #218838;
 }
 
+.cancel-btn {
+    background-color: #6c757d;
+}
+
+.cancel-btn:hover {
+    background-color: #5a6268;
+}
+
+.edit-btn {
+    background-color: #007bff;
+}
+
+.edit-btn:hover {
+    background-color: #0069d9;
+}
+
 .logout {
-    width: 40%;
-    padding: 15px;
     background-color: #dc3545;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    margin-top: 10px;
 }
 
 .logout:hover {
     background-color: #c82333;
 }
 
-.button-group{
+/* Button Group Layout */
+.button-group {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between; /* or use justify-content: center; */
-    gap: 10px; /* Space between buttons */
+    justify-content: space-between;
+    gap: 10px;
     margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.profile-pic {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    object-fit: cover; /* Ensures the image covers the area without distortion */
 }
