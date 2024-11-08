@@ -18,21 +18,54 @@ window.onload = function () {
                 return;
             }
 
+            // Check if email already exists
             if (localStorage.getItem(email)) {
                 signupError.textContent = 'Email is already in use. Please use a different one.';
             } else {
+                // Get the next available user ID based on the highest 'user_' ID stored
+                const newUserId = getNextId('user_');
+
+                // Create a new user object
                 const user = {
-                    id: localStorage.length + 1,
+                    id: newUserId,
                     name: name,
                     email: email,
                     password: password
                 };
-                localStorage.setItem(email, JSON.stringify(user));
+
+                // Store the user in localStorage with the 'user_' prefix
+                localStorage.setItem(`user_${newUserId}`, JSON.stringify(user));
+
+                // Redirect to login page after successful signup
                 window.location.href = 'login_page.html';
             }
         });
     }
-    
+
+    // Function to get the next available ID for the 'user_' prefix
+    function getNextId(prefix) {
+        let highestId = 0; // Default ID to start from 0
+
+        // Loop through all entries in localStorage
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            try {
+                const storedItem = JSON.parse(localStorage.getItem(key));
+
+                // Check if the key starts with the 'user_' prefix and if it has a valid ID
+                if (key.startsWith(prefix) && storedItem && storedItem.id) {
+                    highestId = Math.max(highestId, storedItem.id); // Get the highest ID for that prefix
+                }
+            } catch (error) {
+                console.warn(`Skipping non-JSON or invalid entry at key "${key}"`);
+            }
+        }
+
+        // Return the next available ID (highest ID + 1)
+        return highestId + 1;
+    }
+
+    // Toggle password visibility
     const togglePasswordSignup = document.getElementById('toggle-password-signup');
     if (togglePasswordSignup) {
         togglePasswordSignup.addEventListener('click', function () {
