@@ -33,11 +33,15 @@ This project implements a functional e-commerce store that allows users to brows
 3. **Shopping Cart:** Users can add products to their cart, adjust quantities, and proceed to checkout.
 4. **Order Management:** Users can view their order history and track orders.
 
-### Navigation Diagram (Screen Mockups)
+---
+
+## Navigation Diagram (Screen Mockups)
 ![Mockup1 Diagram](https://github.com/user-attachments/assets/a1d22e29-17eb-4016-a392-23b6daaebd65)
 - [Mockup1](https://marvelapp.com/whiteboard/nPB1tfnLTApB8c8Luxut)
 
-### Data Storage
+---
+
+## Data Storage
 - **Client-Side Storage:** Logged-in user information and shopping cart data are stored on the client side using a local server. This allows quick access to user data and cart status during the shopping session.
 - **Server-Side Storage:** In addition to client-side data, the following information is stored on the server:
     - User account details (id, name, email, address, phone, password)
