@@ -13,13 +13,14 @@ window.onload = function () {
             signupError.textContent = '';
             passwordError.textContent = '';
 
+            // Check if passwords match
             if (password !== confirmPassword) {
                 passwordError.textContent = 'Passwords do not match. Please try again.';
                 return;
             }
 
             // Check if email already exists
-            if (localStorage.getItem(email)) {
+            if (isEmailInUse(email)) {
                 signupError.textContent = 'Email is already in use. Please use a different one.';
             } else {
                 // Get the next available user ID based on the highest 'user_' ID stored
@@ -43,6 +44,20 @@ window.onload = function () {
                 window.location.href = 'login_page.html';
             }
         });
+    }
+
+    // Function to check if the email is already in use
+    function isEmailInUse(email) {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith('user_')) {
+                const storedItem = JSON.parse(localStorage.getItem(key));
+                if (storedItem && storedItem.email === email) {
+                    return true; // Email found, return true
+                }
+            }
+        }
+        return false; // No match found, return false
     }
 
     // Function to get the next available ID for the 'user_' prefix
