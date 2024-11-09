@@ -1,58 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Meta tags for character encoding and responsive design -->
+    <!-- Meta tags for character encoding and viewport settings -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Title of the page that appears on the browser tab -->
     <title>Login - Online Store</title>
-    <!-- Google font for the "visibility" icon in the password field -->
+    
+    <!-- Link to Google Fonts for password visibility icon -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
-    <!-- Link to external CSS for page styling -->
+    <!-- Link to external CSS stylesheets -->
     <link rel="stylesheet" href="styles/login_style.css">
     <link rel="stylesheet" href="styles/general_style.css">
 </head>
 <body>
-    <!-- Main container for the login section -->
+    <!-- Main container for the login page -->
     <div class="login-section">
-        <!-- Container for the login box where the form is located -->
+        <!-- Darkening overlay -->
+        <div class="overlay"></div>
+        
+        <!-- Container for the login form box -->
         <div class="login-box">
-            <!-- Login title -->
+            <!-- Heading for login page -->
             <h2>Login</h2>
-            <!-- Error message div, shown when login fails -->
+            <!-- Error message display for invalid login (if applicable) -->
             <div id="login-error" class="error-message"></div>
-            <!-- Login form -->
+            
+            <!-- Form for login -->
             <form id="login-form">
-                <!-- Form group for email input -->
+                <!-- Input field for email -->
                 <div class="form-group">
-                    <!-- Label for email field -->
                     <label for="login-email">Email</label>
-                    <!-- Email input field, required for form submission -->
                     <input type="email" id="login-email" required>
                 </div>
-                <!-- Form group for password input -->
+                
+                <!-- Input field for password -->
                 <div class="form-group">
-                    <!-- Label for password field -->
                     <label for="login-password">Password</label>
-                    <!-- Wrapper to hold the password field and the toggle visibility icon -->
+                    <!-- Password input field with visibility toggle icon -->
                     <div class="password-wrapper">
-                        <!-- Password input field, required for form submission -->
                         <input type="password" id="login-password" required>
-                        <!-- Icon to toggle password visibility (show/hide password) -->
                         <span id="toggle-password-login" class="material-symbols-outlined">visibility</span>
                     </div>
-                </div>                
-                <!-- Submit button for logging in -->
+                </div>
+                
+                <!-- Submit button to log in -->
                 <button type="submit" class="login-btn">Login</button>
             </form>
-            <!-- Link to the sign-up page for users who don't have an account -->
+            
+            <!-- Link for users who do not have an account -->
             <div class="signup-link">
                 <p>Don't have an account? <a href="signup_page.html">Sign up here</a></p>
             </div>
         </div>
     </div>
 
-    <!-- Link to external JavaScript file for handling form logic and password visibility -->
+    <!-- Link to external JavaScript for handling form logic -->
     <script src="scripts/login_script.js"></script>
 </body>
 </html>
