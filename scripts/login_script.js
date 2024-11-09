@@ -14,12 +14,6 @@ window.onload = function () {
             // Loop through all items in localStorage to find matching email with the correct prefix
             for (let key in localStorage) {
                 if (localStorage.hasOwnProperty(key) && (key.startsWith('user_') || key.startsWith('admin_'))) {
-                    // Check for the correct prefix to determine if user is admin or regular user
-                    if (key.startsWith('admin_')) {
-                        isAdmin = true;  // This is an admin
-                    } else if (key.startsWith('user_')) {
-                        isAdmin = false; // This is a regular user
-                    }
                     let userData = null;
                     try {
                         userData = JSON.parse(localStorage.getItem(key));
@@ -32,14 +26,17 @@ window.onload = function () {
 
                     // Check if the email matches
                     if (userData && userData.email === email) {
+                        // Check for the correct prefix to determine if user is admin or regular user
+                        if (key.startsWith('admin_')) {
+                            isAdmin = true;  // This is an admin
+                        } else if (key.startsWith('user_')) {
+                            isAdmin = false; // This is a regular user
+                        }
                         storedLocal = userData;
                         break; // Stop once we find the matching user
                     }
                 }
             }
-
-            console.log(storedLocal.password);
-            console.log(password);
 
             // Validate password and proceed with login
             if (storedLocal && storedLocal.password === password) {
