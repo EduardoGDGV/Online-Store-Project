@@ -2,13 +2,12 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     margin: 0;
-    padding: 0;
 }
 
 .container {
     width: 90%;
     max-width: 1200px;
-    margin: 30px auto;
+    margin: 100px auto;
     padding: 20px;
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

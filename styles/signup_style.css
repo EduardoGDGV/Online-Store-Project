@@ -1,16 +1,29 @@
-/* Signup Page */
+/* Signup Page Styling */
 .signup-section {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-image: url(background1.png);
+    background-image: url('background1.png');
     background-size: cover; /* Ensure the image covers the entire area */
-    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-repeat: no-repeat; /* Prevent image from repeating */
     background-position: center; /* Center the image */
     padding: 20px;
+    position: relative; /* To position the overlay */
 }
 
+/* Darkening Overlay */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4); /* Dark overlay effect */
+    z-index: 1; /* Ensure the overlay stays behind the content */
+}
+
+/* Signup Box Styling */
 .signup-box {
     background-color: white;
     padding: 40px;
@@ -19,9 +32,11 @@
     width: 100%;
     max-width: 450px;
     text-align: center;
-    transition: box-shadow 0.3s ease;
+    z-index: 2; /* Ensure signup box is above the overlay */
+    position: relative;
 }
 
+/* Hover effect on the signup box */
 .signup-box:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
@@ -56,6 +71,7 @@
     transition: border-color 0.3s ease;
 }
 
+/* Input focus styling */
 .form-group input:focus {
     border-color: #007bff;
     outline: none;
@@ -76,6 +92,7 @@
     margin-top: 15px;
 }
 
+/* Hover effect on the signup button */
 .signup-btn:hover {
     background-color: #0056b3;
 }
@@ -92,6 +109,7 @@
     font-weight: bold;
 }
 
+/* Hover effect on login link */
 .login-link a:hover {
     text-decoration: underline;
     color: #0056b3;
@@ -106,4 +124,11 @@
 .password-wrapper input {
     flex: 1;
     padding-right: 40px;
+}
+
+#toggle-password-signup, #toggle-confirm-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
 }

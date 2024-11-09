@@ -1,80 +1,66 @@
-/* Landing Page Header (Login/Sign Up Links) */
-.landing-header {
-    background: none;
-    width: 100vw;
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 10px;
-    z-index: 100;
-}
-
-.landing-header nav ul {
-    display: flex;
-    gap: 20px;
-}
-
-.landing-header nav ul li a {
-    font-size: 16px;
-    padding: 10px;
-    color: #ffffff;
-    text-transform: uppercase;
-    font-weight: bold;
-    transition: color 0.3s ease;
-}
-
-.landing-header nav ul li a:hover {
-    color: #dcdcdc;
-}
-
-/* Landing Page Content */
+/* Landing Page Styling */
 .landing-page {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-image: url('background1.png'); /* Path to the image */
-    background-size: cover; /* Ensure the image covers the entire area */
-    background-repeat: no-repeat; /* Prevent the image from repeating */
-    background-position: center; /* Center the image */
-    color: white;
+    background-image: url('background1.png');
+    background-size: cover;
+    background-position: center;
     text-align: center;
+    padding-top: 80px;
 }
 
-.landing-page::before {
-    content: '';
+.overlay {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); /* Black overlay with 50% opacity */
-    z-index: 1; /* Place it below the text */
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1;
 }
 
 .landing-content {
-    position: relative; /* Make sure the content is on top of the overlay */
-    z-index: 2; /* Higher than the overlay */
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: 30px; /* Increased gap between text and button */
+    text-align: center;
+    font-family: 'Playfair Display', serif; /* Using Playfair Display font */
 }
 
-.landing-content h1 {
-    font-size: 60px;
-    margin-bottom: 300px;
-    letter-spacing: 1.5px;
+.landing-content h2#description {
+    font-family: "Poiret One", sans-serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 100px;
+    font-weight: 400; /* Lighter weight for more elegant text */
+    color: #f0f0f0;
+    margin: 0;
 }
 
-.landing-content .btn {
+/* Button Styling */
+.button-container {
+    margin-top: 20px; /* More space between text and button */
+}
+
+.button-container .btn {
     background-color: white;
-    opacity: 90%;
-    padding: 15px 30px;
-    font-size: 24px;
+    color: #151515;
+    padding: 18px 40px; /* Slightly larger padding for better button appearance */
+    font-size: 18px; /* Increased font size */
     border-radius: 5px;
     text-transform: uppercase;
-    font-weight: bold;
-    transition: color 0.3s ease;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.landing-content .btn:hover {
-    color: #0056b3;
+.button-container .btn:hover {
+    background-color: #151515;
+    color: white;
 }

@@ -4,13 +4,15 @@ body {
     flex-direction: column;
     min-height: 100vh;
     font-family: Arial, sans-serif;
+    padding-top: 100px;
+    padding-bottom: 20px;
 }
 
 /* Sidebar styles */
 .sidebar {
     width: 200px;
     background-color: #f4f4f4;
-    padding-top: 20px;
+    padding-top: 100px;
     position: fixed;
     top: 50px; /* Adjust this value based on the height of your navbar */
     left: 0;

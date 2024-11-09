@@ -1,16 +1,29 @@
-/* Login Page */
+/* Login Page Styling */
 .login-section {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-image: url(background1.png);
-    background-size: cover; /* Ensure the image covers the entire area */
-    background-repeat: no-repeat; /* Prevent the image from repeating */
-    background-position: center; /* Center the image */
+    background-image: url('background1.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
     padding: 20px;
+    position: relative; /* To position the overlay */
 }
 
+/* Darkening Overlay */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4); /* Dark overlay */
+    z-index: 1; /* Ensure overlay is behind the content */
+}
+
+/* Login Box */
 .login-box {
     background-color: white;
     padding: 40px;
@@ -19,9 +32,11 @@
     width: 100%;
     max-width: 400px;
     text-align: center;
-    transition: box-shadow 0.3s ease;
+    z-index: 2; /* Ensure the login box is above the overlay */
+    position: relative;
 }
 
+/* Hover effect on the login box */
 .login-box:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
@@ -56,6 +71,7 @@
     transition: border-color 0.3s ease;
 }
 
+/* Input field focus styling */
 .form-group input:focus {
     border-color: #007bff;
     outline: none;
@@ -76,6 +92,7 @@
     margin-top: 15px;
 }
 
+/* Hover effect on the login button */
 .login-btn:hover {
     background-color: #0056b3;
 }
@@ -92,13 +109,15 @@
     font-weight: bold;
 }
 
+/* Hover effect on the sign-up link */
 .signup-link a:hover {
     text-decoration: underline;
     color: #0056b3;
 }
 
-#toggle-password-login{
+/* Password visibility toggle icon */
+#toggle-password-login {
     position: absolute;
-    right: 40%;
-    top: 53.5%;
+    right: 12%;
+    top: 54%;
 }

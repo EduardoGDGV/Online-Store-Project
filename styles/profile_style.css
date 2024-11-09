@@ -4,7 +4,7 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 20px;
+    padding: 100px;
     background-color: #f4f4f4;
 }
 
@@ -25,8 +25,10 @@
     color: #333;
 }
 
+
 /* Profile Info Display */
 #profile-info-display p {
+    text-align: left;
     font-size: 18px;
     color: #555;
     margin: 8px 0;
