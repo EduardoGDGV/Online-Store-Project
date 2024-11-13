@@ -4,85 +4,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Page</title>
-    <!-- Preconnect to external fonts (for performance optimization) -->
+    <!-- Preconnect to Google Fonts for optimized font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Importing the 'Poiret One' font from Google Fonts -->
+
+    <!-- Importing custom font 'Poiret One' from Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poiret+One&display=swap" rel="stylesheet">
+
+    <!-- Importing Material Symbols for icons used in the navigation -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="styles/payment_style.css">
     <link rel="stylesheet" href="styles/general_style.css">
 </head>
 <body>
-    <!-- Header section containing the logo and navigation menu -->
     <header>
         <div class="logo">
             <a href="landing_page.html">
                 <h1>STYLACT</h1>
             </a>
         </div>
+        <!-- Navigation menu with links to main pages -->
         <nav>
             <ul>
+                <!-- Home page link -->
                 <li><a href="main_page.html"><span class="material-symbols-outlined" id="material4">home</span></a></li>
+                
+                <!-- Shopping cart page link -->
                 <li><a href="cart_page.html"><span class="material-symbols-outlined" id="material2">shopping_cart</span></a></li>
+                
+                <!-- Profile page link -->
                 <li><a href="profile_page.html"><span class="material-symbols-outlined" id="material3">account_circle</span></a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Main content of the payment page -->
     <main class="container">
-        <h1>Select Your Payment Method</h1>
+        <h1>Checkout</h1>
 
-        <div class="payment-methods">
-            <!-- PIX -->
-            <div class="payment-option" id="pix">
-                <h3>Pix</h3>
-                <img src="pix-logo.png" alt="Pix Logo" />
-                <p>Instant payment via QR Code</p>
-                <button onclick="choosePayment('Pix')">Choose Pix</button>
-            </div>
+        <!-- Payment Method Selection -->
+        <section class="payment-fill">
+            <h2>Select Payment Method</h2>
+            <section class="payment-methods">
+                <div class="payment-option" data-method="credit">Credit Card</div>
+                <div class="payment-option" data-method="paypal">PayPal</div>
+                <div class="payment-option" data-method="pix">Pix</div>
+                <div class="payment-option" data-method="boleto">Boleto</div>
+            </section>
 
-            <!-- PayPal -->
-            <div class="payment-option" id="paypal">
-                <h3>PayPal</h3>
-                <img src="paypal-logo.png" alt="PayPal Logo" />
-                <p>Secure payment via PayPal</p>
-                <button onclick="choosePayment('PayPal')">Choose PayPal</button>
-            </div>
+            <!-- Payment Details (dynamically updated) -->
+            <section id="payment-details" class="payment-details">
+                <form id="payment-form">
+                    <!-- Content updated based on payment method -->
+                </form>
+            </section>
+        </section> 
 
-            <!-- Credit Card -->
-            <div class="payment-option" id="credit-card">
-                <h3>Credit Card</h3>
-                <img src="credit-card-logo.png" alt="Credit Card Logo" />
-                <p>Installment up to 24 times</p>
-                <button onclick="showInstallments()">Choose Credit Card</button>
-                <div class="installments" style="display: none;">
-                    <label for="installment-options">Choose the number of installments:</label>
-                    <select id="installment-options"></select>
+        <!-- Address Form -->
+        <section class="address-form">
+            <h2>Shipping Address</h2>
+            <form>
+                <div class="address-line">
+                    <div class="field">
+                        <label for="street">Street</label>
+                        <input type="text" id="street" required>
+                    </div>
+                    
+                    <div class="field2">
+                        <label for="number">Number</label>
+                        <input type="text" id="number" class="number-input" required>
+                    </div>
                 </div>
-            </div>
+                <div class="address-line">
+                    <div class="field">
+                        <label for="city">City</label>
+                        <input type="text" id="city" required>
+                    </div>
+                    
+                    <div class="field">
+                        <label for="state">State</label>
+                        <input type="text" id="state" required>
+                    </div>
+                </div>
+        
+                <div class="address-line">
+                    <div class="field">
+                        <label for="country">Country</label>
+                        <input type="text" id="country" required>
+                    </div>
+                    
+                    <div class="field">
+                        <label for="zip">ZIP Code</label>
+                        <input type="text" id="zip" required>
+                    </div>
+                </div>
+        
+                <label for="comments">Complement and Comments</label>
+                <textarea id="comments" rows="3" placeholder="Any additional information for delivery"></textarea>
+            </form>
+        </section>        
 
-            <!-- Boleto -->
-            <div class="payment-option" id="boleto">
-                <h3>Boleto</h3>
-                <img src="boleto-logo.png" alt="Boleto Logo" />
-                <p>Up to 5 installments</p>
-                <button onclick="choosePayment('Boleto')">Choose Boleto</button>
-            </div>
+        <!-- Purchase Summary -->
+        <section class="purchase-summary">
+            <h2>Summary</h2>
+            <p>Items: <span id="item-total">$0.00</span></p>
+            <p>Shipping: <span id="shipping">$5.00</span></p>
+            <p>Discount: <span id="discount">-$0.00</span></p>
+            <p>Total: <strong id="total-display">$0.00</strong></p>
+        </section>
 
-            <!-- Debit Card -->
-            <div class="payment-option" id="debit-card">
-                <h3>Debit Card</h3>
-                <img src="debit-card-logo.png" alt="Debit Card Logo" />
-                <p>Immediate payment via debit</p>
-                <button onclick="choosePayment('Debit Card')">Choose Debit Card</button>
-            </div>
-        </div>
-
-        <div class="total-container">
-            <p>Total Purchase: <strong id="total-display">$0.00</strong></p>
-        </div>
+        <!-- Confirm Purchase Button -->
+        <button class="submit-btn" onclick="confirmPurchase()">Confirm Purchase</button>
     </main>
 
     <footer>
