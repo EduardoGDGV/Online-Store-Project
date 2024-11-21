@@ -10,6 +10,7 @@ window.onload = function () {
 
     displayProducts();
 
+    // Handle search bar toggle
     searchIcon.addEventListener('click', function (event) {
         event.preventDefault();
         searchBarContainer.classList.toggle('show-search-bar');
@@ -19,7 +20,7 @@ window.onload = function () {
 function displayProducts() {
     const mainContent = document.querySelector('.main-content');
     const loadIcon = document.getElementById('loader');
-    mainContent.innerHTML = '';
+    mainContent.innerHTML = ''; // Clear current products
 
     const products = [];
 
@@ -89,21 +90,30 @@ function displayProducts() {
             </div>
         `;
 
-        // Add click event listener for navigation
-        productCard.addEventListener('click', () => {
-            window.location.href = `product_page.html?id=${product.id}`;
+        // Add click event listener for card navigation
+        productCard.addEventListener('click', (event) => {
+            // Prevent redirect if interacting with buttons inside the product card
+            if (event.target.closest('.add-to-cart-btn') || event.target.closest('.heart-btn') || event.target.closest('.cart-item-quantity')) {
+                return; // Skip redirection for these elements
+            }
+            window.location.href = `product_page.html?id=${product.id}`; // Proceed with redirection if clicking elsewhere
         });
 
         mainContent.appendChild(productCard);
 
         // Event listener for "Add to Cart" button
         if (!existingProduct) {
-            productCard.querySelector('.add-to-cart-btn').addEventListener('click', () => addToCart(product.id));
+            const addToCartBtn = productCard.querySelector('.add-to-cart-btn');
+            addToCartBtn.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent triggering the card's click event
+                addToCart(product.id);
+            });
         }
 
         // Heart button functionality
         const heartButton = productCard.querySelector('.heart-btn');
-        heartButton.addEventListener('click', function () {
+        heartButton.addEventListener('click', function (event) {
+            event.stopPropagation(); // Prevent triggering the card's click event
             const heartIcon = this.querySelector('.heart-icon');
             heartIcon.classList.toggle('filled');
             heartIcon.innerHTML = heartIcon.classList.contains('filled') ? '&#9829;' : '&#9825;';
