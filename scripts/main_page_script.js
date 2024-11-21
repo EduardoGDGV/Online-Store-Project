@@ -18,6 +18,7 @@ window.onload = function () {
 
 function displayProducts() {
     const mainContent = document.querySelector('.main-content');
+    const loadIcon = document.getElementById('loader');
     mainContent.innerHTML = '';
 
     const products = [];
@@ -88,6 +89,11 @@ function displayProducts() {
             </div>
         `;
 
+        // Add click event listener for navigation
+        productCard.addEventListener('click', () => {
+            window.location.href = `product_page.html?id=${product.id}`;
+        });
+
         mainContent.appendChild(productCard);
 
         // Event listener for "Add to Cart" button
@@ -107,6 +113,9 @@ function displayProducts() {
     if (products.length === 0) {
         mainContent.innerHTML = '<p>No products available at the moment.</p>';
     }
+
+    // Hide the loader after the products are loaded
+    loadIcon.style.display = 'none';
 }
 
 function addToCart(productID) {

@@ -1,6 +1,9 @@
 // When the window finishes loading, display the cart items
 window.onload = function () {
     displayCartItems();
+    const loadIcon = document.getElementById('loader');
+    // Hide the loader after the products are loaded
+    loadIcon.style.display = 'none';
 };
 
 // Function to display items in the shopping cart
