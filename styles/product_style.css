@@ -1,0 +1,210 @@
+.product-page-content {
+    max-width: 800px;
+    margin: 100px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.product-page-content img {
+    max-width: 100%;
+    border-radius: 10px;
+}
+
+/* Top section with product image and info */
+.product-top {
+    display: flex;
+    margin-bottom: 30px;
+}
+
+.product-image {
+    flex: 1.5;
+    margin-right: 15px;
+}
+
+.product-image img {
+    width: 100%;
+    height: 300px;
+    object-fit: contain;
+    border-radius: 5px;
+}
+
+.product-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-info h4 {
+    font-size: 2.5rem;
+    margin: 0;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.product-info .producer {
+    font-size: 1rem;
+    font-style: italic;
+    color: #777;
+    margin: 5px 0;
+}
+
+.product-info .price {
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-top: 10px;
+}
+
+.product-info .rating {
+    display: flex;
+    align-items: center;
+}
+
+.product-info .stars {
+    color: #FFD700;
+    margin-right: 5px;
+}
+
+.product-info .rating-number {
+    font-weight: bold;
+}
+
+.product-info .reviews {
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.product-info .add-to-cart-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.product-info .cart-item-quantity {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.product-info .cart-item-quantity button {
+    padding: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.product-info .cart-item-quantity span {
+    margin: 0 10px;
+    font-size: 1.2rem;
+}
+
+/* Description and Reviews sections */
+.product-description,
+.product-reviews {
+    margin-top: 30px;
+}
+
+.product-description h5,
+.product-reviews h5 {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.product-description p,
+.product-reviews p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.5;
+}
+
+
+.add-to-cart-btn {
+    background-color: #007bff; /* Default blue color */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Darken the background color on hover */
+.add-to-cart-btn:hover {
+    background-color: #0056b3; /* Darker blue */
+    transform: translateY(-2px);
+}
+
+.cart-item-quantity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.cart-item-quantity button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-item-quantity button:hover {
+    background-color: #0056b3;
+}
+
+.cart-item-quantity span {
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.loader {
+    font-size: 5px;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    position: absolute;
+    text-indent: -9999em;
+    top: 40%;
+    left: 50%;
+    animation: mulShdSpin 1.1s infinite ease;
+    transform: translateZ(0);
+    z-index: 10;
+}
+@keyframes mulShdSpin {
+    0%,
+    100% {
+        box-shadow: 0em -2.6em 0em 0em #444444, 1.8em -1.8em 0 0em rgba(68, 68, 68, 0.5), 
+                    2.5em 0em 0 0em rgba(68, 68, 68, 0.5), 1.75em 1.75em 0 0em rgba(68, 68, 68, 0.3), 
+                    0em 2.5em 0 0em rgba(68, 68, 68, 0.3), -1.8em 1.8em 0 0em rgba(68, 68, 68, 0.3), 
+                    -2.6em 0em 0 0em rgba(68, 68, 68, 0.5), -1.8em -1.8em 0 0em rgba(68, 68, 68, 0.7);
+    }
+    12.5% {
+        box-shadow: 0em -2.6em 0em 0em rgba(68, 68, 68, 0.7), 1.8em -1.8em 0 0em #444444, 
+                    2.5em 0em 0 0em rgba(68, 68, 68, 0.5), 1.75em 1.75em 0 0em rgba(68, 68, 68, 0.3), 
+                    0em 2.5em 0 0em rgba(68, 68, 68, 0.3), -1.8em 1.8em 0 0em rgba(68, 68, 68, 0.3), 
+                    -2.6em 0em 0 0em rgba(68, 68, 68, 0.3), -1.8em -1.8em 0 0em rgba(68, 68, 68, 0.5);
+    }
+    25% {
+        box-shadow: 0em -2.6em 0em 0em rgba(68, 68, 68, 0.5), 1.8em -1.8em 0 0em rgba(68, 68, 68, 0.7), 
+                    2.5em 0em 0 0em #444444, 1.75em 1.75em 0 0em rgba(68, 68, 68, 0.3), 
+                    0em 2.5em 0 0em rgba(68, 68, 68, 0.3), -1.8em 1.8em 0 0em rgba(68, 68, 68, 0.3), 
+                    -2.6em 0em 0 0em rgba(68, 68, 68, 0.3), -1.8em -1.8em 0 0em rgba(68, 68, 68, 0.3);
+    }
+    50% {
+        box-shadow: 0em -2.6em 0em 0em rgba(68, 68, 68, 0.3), 1.8em -1.8em 0 0em rgba(68, 68, 68, 0.5), 
+                    2.5em 0em 0 0em rgba(68, 68, 68, 0.7), 1.75em 1.75em 0 0em #444444, 
+                    0em 2.5em 0 0em rgba(68, 68, 68, 0.3), -1.8em 1.8em 0 0em rgba(68, 68, 68, 0.3), 
+                    -2.6em 0em 0 0em rgba(68, 68, 68, 0.3), -1.8em -1.8em 0 0em rgba(68, 68, 68, 0.3);
+    }
+}
