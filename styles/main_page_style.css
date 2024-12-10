@@ -4,59 +4,178 @@ main {
 }
 
 .product-card {
-    width: 220px; /* Fixed width for each product card */
-    height: 350px; /* Fixed height to keep cards uniform */
+    display: flex;
+    width: 450px;
     background-color: #f9f9f9;
     padding: 15px;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     margin: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }
 
 .product-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
 }
 
-.product-card img {
-    max-width: 100%;
-    max-height: 150px; /* Fixed max height for images */
-    object-fit: cover; /* Ensures image fills the allocated space proportionately */
+/* Image container styles - expand the image container */
+.product-image {
+    flex: 1.5; /* Increase space for image */
+    margin-right: 15px;
+}
+
+.product-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
     border-radius: 5px;
-    margin-bottom: 10px; /* Space between image and title */
 }
 
-.product-card h4 {
-    font-size: 20px;
-    margin: 10px 0; /* Adjusted spacing for better layout */
+/* Info container styles - decrease width for text */
+.product-info {
+    flex: 1; /* Reduced space for text */
+    display: flex;
+    flex-direction: column;
+}
+
+.product-info h4 {
+    font-size: 24px;
+    margin: 0;
+    margin-bottom: 5px;
     color: #333;
 }
 
-.product-card p {
-    font-size: 14px; /* Slightly smaller font size */
-    color: #666;
-    margin-bottom: 10px;
-    flex-grow: 1; /* Allows description to grow if needed */
+.product-info .producer {
+    font-size: 14px;
+    font-style: italic;
+    color: #777;
+    margin: 5px 0;
 }
 
-.product-card button {
-    background-color: #28a745;
+.product-info .description {
+    font-size: 14px;
+    color: #666;
+    margin: 5px 0 10px;
+    flex-grow: 1;
+}
+
+/* Rating section */
+.rating {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.stars {
+    color: #ccc; /* Gray color for empty stars */
+    font-size: 14px;
+}
+
+.rating-number {
+    margin-left: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+.reviews {
+    margin-left: 5px;
+    font-size: 14px;
+    color: #777;
+}
+
+/* Price */
+.price {
+    font-size: 16px;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Action buttons */
+.head {
+    display: flex;
+    gap: 80px;
+}
+
+.add-to-cart-btn {
+    background-color: #007bff; /* Default blue color */
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.product-card button:hover {
-    background-color: #218838;
+/* Darken the background color on hover */
+.add-to-cart-btn:hover {
+    background-color: #0056b3; /* Darker blue */
     transform: translateY(-2px);
+}
+
+/* General button styles */
+.heart-btn {
+    background-color: transparent; /* Make the button transparent */
+    border: none;
+    color: #b80034;
+    font-size: 22px; /* Increase the size for visibility */
+    cursor: pointer;
+    transition: color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    top: -10%;
+}
+
+/* Empty heart color */
+.heart-icon {
+    color: #b80034;
+    transition: color 0.3s ease;
+}
+
+/* Filled heart state */
+.heart-icon.filled {
+    color: #c70039; /* Dark red for filled heart */
+}
+
+/* Optional: Darken color slightly on hover */
+.heart-btn:hover .heart-icon {
+    color: #b80034; /* Darker red on hover */
+}
+
+/* Quantity buttons style (replaces "Add to Cart" button when the product is in the cart) */
+.cart-item-quantity {
+    display: flex;
+    align-items: center;
+    align-self: center;
+    font-size: 1rem;
+    position: relative; /* Keep the buttons in the same position */
+}
+
+/* Style for the increase/decrease buttons to match the add-to-cart button */
+.cart-item-quantity button {
+    background-color: #007bff; /* Same blue background */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 40px;  /* Same width as the add-to-cart button */
+}
+
+/* Hover effect for the increase/decrease buttons */
+.cart-item-quantity button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: translateY(-2px);
+}
+
+/* Style for the quantity number in the middle */
+.cart-item-quantity span {
+    margin: 0 10px;
+    font-size: 14px;  /* Match the size of the button text */
 }
 
 .main-content {
@@ -77,8 +196,8 @@ main {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     max-width: 1200px; /* Max width for better layout on larger screens */
     margin: 40px auto; /* Centered layout with margin */
-    padding-top: 100px; /* Adjust this value based on your header's height */
     padding-bottom: 100px; /* Adjust this value based on your header's height */
+    margin-top: 100px;
 }
 
 .main-dashboard h2 {
@@ -99,7 +218,6 @@ main {
     position: fixed;
     left: 0;
     right: 0;
-    margin-top: 45px;
     padding: 10px 20px;
     background-color: #f9f9f9;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -119,4 +237,45 @@ main {
 /* Toggle search bar visibility */
 .show-search-bar {
     display: block; /* Display search bar when active */
+}
+
+.loader {
+    font-size: 5px;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    position: absolute;
+    text-indent: -9999em;
+    top: 40%;
+    left: 50%;
+    animation: mulShdSpin 1.1s infinite ease;
+    transform: translateZ(0);
+    z-index: 10;
+}
+@keyframes mulShdSpin {
+    0%,
+    100% {
+        box-shadow: 0em -2.6em 0em 0em #444444, 1.8em -1.8em 0 0em rgba(68, 68, 68, 0.5), 
+                    2.5em 0em 0 0em rgba(68, 68, 68, 0.5), 1.75em 1.75em 0 0em rgba(68, 68, 68, 0.3), 
+                    0em 2.5em 0 0em rgba(68, 68, 68, 0.3), -1.8em 1.8em 0 0em rgba(68, 68, 68, 0.3), 
+                    -2.6em 0em 0 0em rgba(68, 68, 68, 0.5), -1.8em -1.8em 0 0em rgba(68, 68, 68, 0.7);
+    }
+    12.5% {
+        box-shadow: 0em -2.6em 0em 0em rgba(68, 68, 68, 0.7), 1.8em -1.8em 0 0em #444444, 
+                    2.5em 0em 0 0em rgba(68, 68, 68, 0.5), 1.75em 1.75em 0 0em rgba(68, 68, 68, 0.3), 
+                    0em 2.5em 0 0em rgba(68, 68, 68, 0.3), -1.8em 1.8em 0 0em rgba(68, 68, 68, 0.3), 
+                    -2.6em 0em 0 0em rgba(68, 68, 68, 0.3), -1.8em -1.8em 0 0em rgba(68, 68, 68, 0.5);
+    }
+    25% {
+        box-shadow: 0em -2.6em 0em 0em rgba(68, 68, 68, 0.5), 1.8em -1.8em 0 0em rgba(68, 68, 68, 0.7), 
+                    2.5em 0em 0 0em #444444, 1.75em 1.75em 0 0em rgba(68, 68, 68, 0.3), 
+                    0em 2.5em 0 0em rgba(68, 68, 68, 0.3), -1.8em 1.8em 0 0em rgba(68, 68, 68, 0.3), 
+                    -2.6em 0em 0 0em rgba(68, 68, 68, 0.3), -1.8em -1.8em 0 0em rgba(68, 68, 68, 0.3);
+    }
+    50% {
+        box-shadow: 0em -2.6em 0em 0em rgba(68, 68, 68, 0.3), 1.8em -1.8em 0 0em rgba(68, 68, 68, 0.5), 
+                    2.5em 0em 0 0em rgba(68, 68, 68, 0.7), 1.75em 1.75em 0 0em #444444, 
+                    0em 2.5em 0 0em rgba(68, 68, 68, 0.3), -1.8em 1.8em 0 0em rgba(68, 68, 68, 0.3), 
+                    -2.6em 0em 0 0em rgba(68, 68, 68, 0.3), -1.8em -1.8em 0 0em rgba(68, 68, 68, 0.3);
+    }
 }

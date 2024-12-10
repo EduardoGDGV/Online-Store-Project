@@ -4,63 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart</title>
-    <!-- Preconnect to external fonts (for performance optimization) -->
+    
+    <!-- Preconnect to Google Fonts for optimized font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Importing the 'Poiret One' font from Google Fonts -->
+
+    <!-- Importing custom font 'Poiret One' from Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poiret+One&display=swap" rel="stylesheet">
+
+    <!-- Importing Material Symbols for icons used in the navigation -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <!-- Linking external CSS stylesheets for the cart and general styling -->
     <link rel="stylesheet" href="styles/cart_style.css">
     <link rel="stylesheet" href="styles/general_style.css">
 </head>
 <body>
-    <!-- Header section containing the logo and navigation menu -->
+    <!-- Header with logo and navigation menu -->
     <header>
         <div class="logo">
+            <!-- Link to landing page -->
             <a href="landing_page.html">
                 <h1>STYLACT</h1>
             </a>
         </div>
+        
+        <!-- Navigation menu with links to main pages -->
         <nav>
             <ul>
+                <!-- Home page link -->
                 <li><a href="main_page.html"><span class="material-symbols-outlined" id="material4">home</span></a></li>
+                
+                <!-- Shopping cart page link -->
                 <li><a href="cart_page.html"><span class="material-symbols-outlined" id="material2">shopping_cart</span></a></li>
+                
+                <!-- Profile page link -->
                 <li><a href="profile_page.html"><span class="material-symbols-outlined" id="material3">account_circle</span></a></li>
             </ul>
         </nav>
     </header>
 
+    <!-- Main container for the cart content -->
     <div class="container">
+        <!-- Page title -->
         <h1>Shopping Cart</h1>
-
-        <!-- Cart table for items -->
-        <table class="cart-table">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="cart-items">
-                <!-- Cart items will be dynamically inserted here -->
-            </tbody>
-        </table>
-
-        <!-- Total and Checkout -->
-        <div class="total" id="cart-total">
-            <!-- Total price will be displayed here -->
+        <div class="loader" id="loader"></div> <!-- Loader icon -->
+        <!-- Dynamic list of cart items -->
+        <div id="cart-items">
+            <!-- Cart items will be dynamically added here by JavaScript -->
         </div>
-        <div>
-            <a href="#" id="checkout-btn">Proceed to Checkout</a>
+
+        <!-- Total price section -->
+        <div class="total" id="cart-total"></div>
+
+        <!-- Checkout button section -->
+        <div class="checkout">
+            <!-- Link to checkout, will lead to payment page if cart has items -->
+            <a href="payment_page.html" id="checkout-btn">Checkout</a>
         </div>
     </div>
 
+    <!-- Footer with copyright information -->
     <footer>
         <p>&copy; 2024 Stylact Store. All Rights Reserved.</p>
     </footer>
 
+    <!-- Link to JavaScript file for handling cart functionality -->
     <script src="scripts/cart_script.js"></script>
 </body>
 </html>

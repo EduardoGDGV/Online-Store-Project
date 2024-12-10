@@ -1,79 +1,77 @@
+// When the window finishes loading, display the cart items
 window.onload = function () {
     displayCartItems();
+    const loadIcon = document.getElementById('loader');
+    // Hide the loader after the products are loaded
+    loadIcon.style.display = 'none';
 };
 
+// Function to display items in the shopping cart
 function displayCartItems() {
-    const cartItemsContainer = document.getElementById('cart-items');
-    const cartTotalContainer = document.getElementById('cart-total');
-    const checkoutButton = document.getElementById('checkout-btn');
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartItemsContainer = document.getElementById('cart-items'); // Container for cart items
+    const cartTotalContainer = document.getElementById('cart-total'); // Container for total price
+    const cart = JSON.parse(localStorage.getItem('cart')) || []; // Retrieve cart data from localStorage or initialize an empty array
+    
+    cartItemsContainer.innerHTML = ''; // Clear any existing content in cart items container
 
-    cartItemsContainer.innerHTML = ''; // Clear any existing cart items
-
+    // If the cart is empty, display a message and clear the total price
     if (cart.length === 0) {
-        cartItemsContainer.innerHTML = '<tr><td colspan="4">Your cart is empty.</td></tr>';
+        cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
         cartTotalContainer.innerHTML = '';
         return;
     }
 
-    let totalPrice = 0;
+    let totalPrice = 0; // Initialize total price accumulator
 
+    // Loop through each item in the cart to generate its HTML structure
     cart.forEach((product, index) => {
-        const productRow = document.createElement('tr');
-        productRow.classList.add('cart-item');
+        const itemDiv = document.createElement('div'); // Create a div for each cart item
+        itemDiv.classList.add('cart-item'); // Add 'cart-item' class for styling
 
-        productRow.innerHTML = `
-            <td class="cart-item-details">
+        // Populate the cart item with image, name, quantity controls, price, and remove button
+        itemDiv.innerHTML = `
+            <div class="cart-item-image">
                 <img src="${product.image || 'placeholder.png'}" alt="${product.name}">
+            </div>
+            <div class="cart-item-details">
                 <span class="cart-item-name">${product.name}</span>
-            </td>
-            <td class="cart-item-price">R$ ${Number(product.price).toFixed(2)}</td>
-            <td class="cart-item-quantity">
-                <span>${product.quantity}</span>
-            </td>
-            <td><span class="remove-item" data-index="${index}">Remove</span></td>
+                <div class="cart-item-quantity">
+                    <!-- Button to decrease quantity, minimum of 1 -->
+                    <button onclick="updateQuantity(${index}, -1)">-</button>
+                    <span>${product.quantity}</span> <!-- Current quantity -->
+                    <!-- Button to increase quantity -->
+                    <button onclick="updateQuantity(${index}, 1)">+</button>
+                </div>
+                <span class="cart-item-price">R$ ${(product.price * product.quantity).toFixed(2)}</span> <!-- Item price -->
+                <!-- Button to remove item from cart -->
+                <button class="remove-item" onclick="removeItemFromCart(${index})">x</button>
+            </div>
         `;
 
-        cartItemsContainer.appendChild(productRow);
+        cartItemsContainer.appendChild(itemDiv); // Add the item div to the cart items container
 
-        totalPrice += product.price * product.quantity;
+        totalPrice += product.price * product.quantity; // Add to total price
     });
 
-    cartTotalContainer.innerHTML = `<p>Total: R$ ${totalPrice.toFixed(2)}</p>`;
-    checkoutButton.classList.remove('disabled'); // Ensure checkout button is enabled
-    checkoutButton.href = 'payment_page.html'; // Set link to payment page
-
-    // Add remove item functionality
-    document.querySelectorAll('.remove-item').forEach((button) => {
-        button.addEventListener('click', function () {
-            const itemIndex = this.getAttribute('data-index');
-            removeItemFromCart(itemIndex);
-        });
-    });
+    // Display the total price in the cart total container
+    cartTotalContainer.innerHTML = `<div class="total-text">
+                                        <p>Subtotal</p>
+                                        <p>R$ ${totalPrice.toFixed(2)}</p>
+                                    </div>`;
 }
 
-// Function to show error if cart is empty
-function checkCartBeforeCheckout() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    if (cart.length === 0) {
-        alert("Your cart is empty. Please add items before proceeding to checkout.");
-        return false;
-    }
-    return true;
+// Function to update the quantity of a specific item in the cart
+function updateQuantity(index, change) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || []; // Retrieve cart from localStorage
+    cart[index].quantity = Math.max(1, cart[index].quantity + change); // Update quantity and ensure it doesn’t go below 1
+    localStorage.setItem('cart', JSON.stringify(cart)); // Save updated cart back to localStorage
+    displayCartItems(); // Refresh cart display to show updated quantities and price
 }
 
-// Attach the function to the checkout button's click event
-document.getElementById('checkout-btn').addEventListener('click', function(event) {
-    if (!checkCartBeforeCheckout()) {
-        event.preventDefault(); // Prevent navigation to the payment page if cart is empty
-    }
-});
-
+// Function to remove an item from the cart
 function removeItemFromCart(index) {
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
+    let cart = JSON.parse(localStorage.getItem('cart')) || []; // Retrieve cart from localStorage
     cart.splice(index, 1); // Remove the item at the specified index
-    localStorage.setItem('cart', JSON.stringify(cart)); // Update cart in localStorage
-
-    displayCartItems(); // Refresh the cart display
+    localStorage.setItem('cart', JSON.stringify(cart)); // Save updated cart back to localStorage
+    displayCartItems(); // Refresh cart display to show the updated list
 }

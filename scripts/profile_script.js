@@ -32,6 +32,10 @@ window.onload = function () {
         // Attach event listeners to Edit and Logout buttons
         document.getElementById('edit-profile-btn').addEventListener('click', displayEditForm);
         document.getElementById('logout').addEventListener('click', logoutUser);
+
+        const loadIcon = document.getElementById('loader');
+        // Hide the loader after the products are loaded
+        loadIcon.style.display = 'none';
     }
 
     function displayEditForm() {
