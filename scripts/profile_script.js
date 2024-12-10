@@ -1,10 +1,9 @@
 window.onload = function () {
-    // Check if the user is logged in by checking localStorage
-    const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser')); // Parse user data from JSON
-    const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn');
+    // Check if the user is logged in by checking session (or localStorage for simplicity)
+    const loggedInUserId = localStorage.getItem('loggedInUserId');  // Save user ID in localStorage after login
 
     // If no user is logged in, redirect to the landing page
-    if (!loggedInUser && !isAdminLoggedIn) {
+    if (!loggedInUserId && !isAdminLoggedIn) {
         window.location.href = 'landing_page.html';
         return;
     }
@@ -12,16 +11,34 @@ window.onload = function () {
     const profileSection = document.querySelector('.profile-box');
     displayProfileContent();
 
-    function displayProfileContent() {
-        // Display profile with the user's stored data
+    // Fetch the user's profile from the database
+    async function fetchUserProfile() {
+        try {
+            const response = await fetch(`/api/users/${loggedInUserId}`);
+            const user = await response.json();
+            return user;
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+        }
+    }
+
+    async function displayProfileContent() {
+        const user = await fetchUserProfile();
+
+        if (!user) {
+            alert('User data could not be loaded.');
+            return;
+        }
+
+        // Display profile with the user's data
         profileSection.innerHTML = `
             <h2>My Profile</h2>
             <div id="profile-info-display">
-                <img src="${loggedInUser.profilePic || ''}" alt="Profile Picture" class="profile-pic" width="100" height="100">
-                <p><strong>Name:</strong> <span id="display-name">${loggedInUser.name || 'N/A'}</span></p>
-                <p><strong>Email:</strong> <span id="display-email">${loggedInUser.email || 'N/A'}</span></p>
-                <p><strong>Address:</strong> <span id="display-address">${loggedInUser.address || 'N/A'}</span></p>
-                <p><strong>Phone Number:</strong> <span id="display-number">${loggedInUser.number || 'N/A'}</span></p>
+                <img src="${user.profilePic || ''}" alt="Profile Picture" class="profile-pic" width="100" height="100">
+                <p><strong>Name:</strong> <span id="display-name">${user.name || 'N/A'}</span></p>
+                <p><strong>Email:</strong> <span id="display-email">${user.email || 'N/A'}</span></p>
+                <p><strong>Address:</strong> <span id="display-address">${user.address || 'N/A'}</span></p>
+                <p><strong>Phone Number:</strong> <span id="display-number">${user.phone || 'N/A'}</span></p>
             </div>
             <div class="button-group">
                 <button id="edit-profile-btn" class="edit-btn">Edit Profile</button>
@@ -34,11 +51,17 @@ window.onload = function () {
         document.getElementById('logout').addEventListener('click', logoutUser);
 
         const loadIcon = document.getElementById('loader');
-        // Hide the loader after the products are loaded
-        loadIcon.style.display = 'none';
+        loadIcon.style.display = 'none';  // Hide loader
     }
 
-    function displayEditForm() {
+    async function displayEditForm() {
+        const user = await fetchUserProfile();
+
+        if (!user) {
+            alert('Unable to load user data for editing.');
+            return;
+        }
+
         profileSection.innerHTML = `
             <h2>Edit Profile</h2>
             <form id="profile-form">
@@ -48,23 +71,23 @@ window.onload = function () {
                 </div>
                 <div class="form-group">
                     <label for="name">Name</label>
-                    <input type="text" id="name" value="${loggedInUser.name || ''}">
+                    <input type="text" id="name" value="${user.name || ''}">
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" value="${loggedInUser.email || ''}">
+                    <input type="email" id="email" value="${user.email || ''}">
                 </div>
                 <div class="form-group">
                     <label for="address">Address</label>
-                    <input type="text" id="address" value="${loggedInUser.address || ''}">
+                    <input type="text" id="address" value="${user.address || ''}">
                 </div>
                 <div class="form-group">
-                    <label for="number">Phone Number</label>
-                    <input type="text" id="number" value="${loggedInUser.number || ''}">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" value="${user.phone || ''}">
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" value="${loggedInUser.password || ''}">
+                    <input type="password" id="password">
                 </div>
                 <div class="button-group">
                     <button type="button" class="save-btn">Save Changes</button>
@@ -78,73 +101,63 @@ window.onload = function () {
         document.querySelector('.cancel-btn').addEventListener('click', displayProfileContent);
     }
 
-    function saveChanges() {
-        // Retrieve values from the input fields
+    async function saveChanges() {
+        const user = await fetchUserProfile();
+
+        if (!user) {
+            alert('Unable to load user data for saving changes.');
+            return;
+        }
+
+        // Retrieve values from the form inputs
         const profilePicInput = document.getElementById('profilePic').files[0];
         const updatedUser = {
-            id: loggedInUser.id,
             name: document.getElementById('name').value,
             email: document.getElementById('email').value,
             address: document.getElementById('address').value,
-            number: document.getElementById('number').value,
-            password: document.getElementById('password').value || loggedInUser.password, // Keep the old password if no new one is entered
+            phone: document.getElementById('phone').value,
+            password: document.getElementById('password').value || user.password, // Keep the old password if no new one
         };
 
         // If a new profile picture is selected, convert it to a base64 string
         if (profilePicInput) {
             const reader = new FileReader();
-            reader.onloadend = function () {
-                updatedUser.profilePic = reader.result; // Set the profilePic to the base64 string
-                updateProfile(updatedUser); // Update the profile with new picture
+            reader.onloadend = async function () {
+                updatedUser.profilePic = reader.result; // Base64 string of the image
+                await updateProfile(updatedUser); // Send updated user data to the server
             };
-            reader.readAsDataURL(profilePicInput); // Read the file as a base64 URL
+            reader.readAsDataURL(profilePicInput); // Read the file as base64
         } else {
-            updatedUser.profilePic = loggedInUser.profilePic || 'default-placeholder.png'; // Keep the old profile picture if no new one is selected
-            updateProfile(updatedUser); // Update the profile without a new picture
+            updatedUser.profilePic = user.profilePic || 'default-placeholder.png';
+            await updateProfile(updatedUser); // Send updated user data without the picture
         }
 
-        // Reload the page to reflect the changes
+        // Reload the page to reflect changes
         window.location.reload();
     }
 
-    function updateProfile(updatedUser) {
-        // Loop through all localStorage items
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-    
-            // Check if the key starts with 'user_'
-            if (key.startsWith('user_')) {
-                try {
-                    const storedUser = JSON.parse(localStorage.getItem(key));
-    
-                    // Debug: Log each item in localStorage with 'user_' prefix
-                    console.log(`Key: ${key}, Value:`, storedUser);
-    
-                    // Find the user with the same ID as the logged-in user
-                    if (storedUser && storedUser.id === updatedUser.id) {
-                        // Debug: Log the matched user
-                        console.log('Updating User:', storedUser);
-    
-                        // Update the user data
-                        localStorage.setItem(key, JSON.stringify(updatedUser));
-                        localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
-                        break; // Stop once the user is found and updated
-                    }
-                } catch (error) {
-                    console.warn(`Skipping non-JSON or invalid entry at key "${key}"`);
-                }
+    async function updateProfile(updatedUser) {
+        try {
+            const response = await fetch(`/api/users/${loggedInUserId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedUser),
+            });
+
+            if (response.ok) {
+                // Update localStorage to reflect changes (optional)
+                localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
+                alert('Profile updated successfully!');
+            } else {
+                alert('Failed to update profile. Please try again.');
             }
+        } catch (error) {
+            console.error('Error updating user profile:', error);
         }
-    
-        // Update the display content with the new profile data
-        displayProfileContent();
-    }    
+    }
 
     function logoutUser() {
-        // Remove user session data from localStorage
-        localStorage.removeItem('loggedInUser');
-        localStorage.removeItem('isAdminLoggedIn');
-        // Redirect to the landing page after logout
+        localStorage.removeItem('loggedInUserId');
         window.location.href = 'landing_page.html';
     }
 };

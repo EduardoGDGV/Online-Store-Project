@@ -1,4 +1,4 @@
-window.onload = function () {
+window.onload = async function () {
     const loggedInUser = localStorage.getItem('loggedInUser');
     const searchIcon = document.getElementById('search-icon');
     const searchBarContainer = document.getElementById('search-bar-container');
@@ -8,7 +8,8 @@ window.onload = function () {
         return;
     }
 
-    displayProducts();
+    // Fetch and display products
+    await displayProducts();
 
     // Handle search bar toggle
     searchIcon.addEventListener('click', function (event) {
@@ -17,165 +18,181 @@ window.onload = function () {
     });
 };
 
-function displayProducts() {
+// Function to fetch and display products from the server
+async function displayProducts() {
     const mainContent = document.querySelector('.main-content');
     const loadIcon = document.getElementById('loader');
     mainContent.innerHTML = ''; // Clear current products
 
-    const products = [];
-
-    // Fetch products from localStorage
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key.startsWith('product_')) {
-            try {
-                const product = JSON.parse(localStorage.getItem(key));
-                if (product && product.name && product.producer && product.price && product.image) {
-                    products.push(product);
-                }
-            } catch (error) {
-                console.warn(`Error parsing product at key ${key}:`, error);
-            }
-        }
-    }
-
-    // Generate product cards
-    products.slice(0, 4).forEach((product) => {
-        const productCard = document.createElement('div');
-        productCard.classList.add('product-card');
-
-        // Check if the product is already in the cart
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const existingProduct = cart.find(item => item.id === product.id);
-
-        let addToCartButtonHtml = `
-            <button class="add-to-cart-btn">Add to Cart</button>
-        `;
-
-        let quantityButtonsHtml = '';
-
-        if (existingProduct) {
-            // If the product is already in the cart, display quantity buttons
-            quantityButtonsHtml = `
-                <div class="cart-item-quantity">
-                    <button onclick="updateQuantity(${product.id}, -1)">-</button>
-                    <span>${existingProduct.quantity}</span>
-                    <button onclick="updateQuantity(${product.id}, 1)">+</button>
-                </div>
-            `;
-            addToCartButtonHtml = ''; // Remove "Add to Cart" button
-        }
-
-        productCard.innerHTML = `
-            <div class="product-image">
-                <img src="${product.image || 'placeholder.png'}" alt="${product.name}">
-            </div>
-            <div class="product-info">
-                <div class="head">
-                    <h4>${product.name}</h4>
-                    <button class="heart-btn">
-                        <span class="heart-icon">&#9825;</span> <!-- Initial empty heart -->
-                    </button>
-                </div>
-                <p class="producer">${product.producer}</p>
-                <p class="description">${product.description || 'No description available.'}</p>
-                <div class="rating">
-                    <span class="stars">☆☆☆☆☆</span>
-                    <span class="rating-number">0.0</span>
-                    <span class="reviews">(0 reviews)</span>
-                </div>
-                <p class="price">R$ ${Number(product.price).toFixed(2)}</p>
-                ${addToCartButtonHtml}
-                ${quantityButtonsHtml}
-            </div>
-        `;
-
-        // Add click event listener for card navigation
-        productCard.addEventListener('click', (event) => {
-            // Prevent redirect if interacting with buttons inside the product card
-            if (event.target.closest('.add-to-cart-btn') || event.target.closest('.heart-btn') || event.target.closest('.cart-item-quantity')) {
-                return; // Skip redirection for these elements
-            }
-            window.location.href = `product_page.html?id=${product.id}`; // Proceed with redirection if clicking elsewhere
-        });
-
-        mainContent.appendChild(productCard);
-
-        // Event listener for "Add to Cart" button
-        if (!existingProduct) {
-            const addToCartBtn = productCard.querySelector('.add-to-cart-btn');
-            addToCartBtn.addEventListener('click', (event) => {
-                event.stopPropagation(); // Prevent triggering the card's click event
-                addToCart(product.id);
-            });
-        }
-
-        // Heart button functionality
-        const heartButton = productCard.querySelector('.heart-btn');
-        heartButton.addEventListener('click', function (event) {
-            event.stopPropagation(); // Prevent triggering the card's click event
-            const heartIcon = this.querySelector('.heart-icon');
-            heartIcon.classList.toggle('filled');
-            heartIcon.innerHTML = heartIcon.classList.contains('filled') ? '&#9829;' : '&#9825;';
-        });
-    });
-
-    if (products.length === 0) {
-        mainContent.innerHTML = '<p>No products available at the moment.</p>';
-    }
-
-    // Hide the loader after the products are loaded
-    loadIcon.style.display = 'none';
-}
-
-function addToCart(productID) {
-    let cart = JSON.parse(localStorage.getItem('cart')) || []; // Retrieve the cart or initialize as empty
-
-    // Retrieve the product from localStorage using the product id
-    const product = JSON.parse(localStorage.getItem(`product_${productID}`));
-
-    // Check if the product exists
-    if (!product) {
-        console.error(`Product ${productID} not found in localStorage.`);
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if (!loggedInUser) {
+        alert('User not logged in. Redirecting to login page...');
+        window.location.href = 'login_page.html';
         return;
     }
 
-    // Check if the product is already in the cart
-    const existingProduct = cart.find(item => item.id === product.id);
+    try {
+        // Show loader
+        loadIcon.style.display = 'block';
 
-    if (existingProduct) {
-        // If the product exists, increase the quantity
-        existingProduct.quantity += 1;
-    } else {
-        // If the product is not in the cart, add it with an initial quantity of 1
-        const productWithQuantity = { ...product, quantity: 1 };
-        cart.push(productWithQuantity);
+        // Fetch products from the server
+        const response = await fetch('http://localhost:5000/api/products');
+        const products = await response.json();
+
+        // Fetch the user's cart
+        const cartResponse = await fetch(`http://localhost:5000/api/cart/${loggedInUser}`);
+        const cart = await cartResponse.json();
+
+        // Generate product cards
+        products.forEach((product) => {
+            const productCard = document.createElement('div');
+            productCard.classList.add('product-card');
+
+            // Check if the product is already in the user's cart
+            const cartItem = cart.products.find((item) => item.product._id === product._id);
+
+            let addToCartButtonHtml = '';
+            let quantityButtonsHtml = '';
+
+            if (cartItem) {
+                // If the product is in the cart, show quantity buttons
+                quantityButtonsHtml = `
+                    <div class="cart-item-quantity">
+                        <button class="quantity-btn" onclick="updateCartQuantity('${product._id}', -1)">-</button>
+                        <span>${cartItem.quantity}</span>
+                        <button class="quantity-btn" onclick="updateCartQuantity('${product._id}', 1)">+</button>
+                    </div>
+                `;
+            } else {
+                // If the product is not in the cart, show "Add to Cart" button
+                addToCartButtonHtml = `
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                `;
+            }
+
+            productCard.innerHTML = `
+                <div class="product-image">
+                    <img src="${product.image || 'placeholder.png'}" alt="${product.name}">
+                </div>
+                <div class="product-info">
+                    <div class="head">
+                        <h4>${product.name}</h4>
+                        <button class="heart-btn">
+                            <span class="heart-icon">&#9825;</span>
+                        </button>
+                    </div>
+                    <p class="producer">${product.producer}</p>
+                    <p class="description">${product.description || 'No description available.'}</p>
+                    <div class="rating">
+                        <span class="stars">☆☆☆☆☆</span>
+                        <span class="rating-number">0.0</span>
+                        <span class="reviews">(0 reviews)</span>
+                    </div>
+                    <p class="price">R$ ${Number(product.price).toFixed(2)}</p>
+                    ${addToCartButtonHtml}
+                    ${quantityButtonsHtml}
+                </div>
+            `;
+
+            mainContent.appendChild(productCard);
+
+            // Event listener for "Add to Cart" button
+            if (!cartItem) {
+                const addToCartBtn = productCard.querySelector('.add-to-cart-btn');
+                addToCartBtn.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevent triggering the card's click event
+                    addToCart(product);
+                });
+            }
+
+            // Heart button functionality
+            const heartButton = productCard.querySelector('.heart-btn');
+            heartButton.addEventListener('click', function (event) {
+                event.stopPropagation(); // Prevent triggering the card's click event
+                const heartIcon = this.querySelector('.heart-icon');
+                heartIcon.classList.toggle('filled');
+                heartIcon.innerHTML = heartIcon.classList.contains('filled') ? '&#9829;' : '&#9825;';
+            });
+        });
+
+        if (products.length === 0) {
+            mainContent.innerHTML = '<p>No products available at the moment.</p>';
+        }
+
+        // Hide the loader after the products are loaded
+        loadIcon.style.display = 'none';
+    } catch (error) {
+        console.error('Error fetching products or cart:', error);
+        mainContent.innerHTML = '<p>Error loading products. Please try again later.</p>';
+        loadIcon.style.display = 'none';
     }
-
-    // Save the updated cart to localStorage
-    localStorage.setItem('cart', JSON.stringify(cart));
-
-    // Re-render the main page with updated cart data (if needed, you can remove this line if unnecessary)
-    displayProducts();
 }
 
-function updateQuantity(productID, change) {
-    let cart = JSON.parse(localStorage.getItem('cart')) || []; // Retrieve the cart from localStorage
+// Function to add a product to the user's cart
+async function addToCart(product) {
+    const loggedInUser = localStorage.getItem('loggedInUser');
 
-    const product = cart.find(item => item.id === productID);
-    
-    if (!product) return; // Ensure product exists in cart
-
-    product.quantity = Math.max(0, product.quantity + change); // Update quantity, prevent negative
-
-    if (product.quantity === 0) {
-        // Remove product if quantity is zero
-        cart = cart.filter(item => item.id !== productID);
+    if (!loggedInUser) {
+        alert('Please log in to add items to your cart.');
+        return;
     }
 
-    // Save the updated cart to localStorage
-    localStorage.setItem('cart', JSON.stringify(cart));
+    try {
+        const response = await fetch(`http://localhost:5000/api/cart/${loggedInUser}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                productId: product._id,
+                quantity: 1,
+            }),
+        });
 
-    // Re-render the main page with updated cart data
-    displayProducts();
+        if (response.ok) {
+            const updatedCart = await response.json();
+            console.log('Cart updated:', updatedCart);
+            alert(`${product.name} added to cart!`);
+        } else {
+            console.error('Error adding product to cart:', await response.text());
+            alert('Failed to add product to cart.');
+        }
+    } catch (error) {
+        console.error('Error adding product to cart:', error);
+        alert('An error occurred while adding to the cart.');
+    }
+}
+
+// Function to update the quantity of a product in the cart
+async function updateCartQuantity(productId, change) {
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if (!loggedInUser) {
+        alert('User not logged in. Redirecting to login page...');
+        window.location.href = 'login_page.html';
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:5000/api/cart/${loggedInUser}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productId, change }),
+        });
+
+        if (response.ok) {
+            const updatedCart = await response.json();
+            console.log('Cart updated:', updatedCart);
+
+            // Re-fetch and display products to reflect updated quantities
+            await displayProducts();
+        } else {
+            console.error('Error updating cart:', await response.text());
+            alert('Failed to update cart quantity.');
+        }
+    } catch (error) {
+        console.error('Error updating cart:', error);
+        alert('An error occurred while updating the cart.');
+    }
 }

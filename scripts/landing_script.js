@@ -1,22 +1,23 @@
 window.onload = function () {
-    const shopNowButton = document.querySelector('.btn'); // Selects the "Shop Now" button
+    // Retrieve logged-in user data from localStorage
+    const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
 
+    if (!loggedInUser || !loggedInUser.id) {
+        // Redirect to login page if no valid user is logged in
+        window.location.href = 'login_page.html';
+        return;
+    }
+
+    // Add event listener to the "Shop Now" button
+    const shopNowButton = document.querySelector('.btn');
     shopNowButton.addEventListener('click', function (event) {
         event.preventDefault();
 
-        // Check for both regular user and admin login status
-        const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
-        const loggedInUser = localStorage.getItem('loggedInUser');
-
-        if (isAdminLoggedIn) {
-            // Redirect to admin page if an admin is logged in
-            window.location.href = 'admin_page.html';
-        } else if (loggedInUser) {
-            // Redirect to main page if a regular user is logged in
-            window.location.href = 'main_page.html';
+        // Check if the user is an admin
+        if (loggedInUser.role === 'admin') {
+            window.location.href = 'admin_page.html'; // Redirect to admin page
         } else {
-            // Redirect to login page if no one is logged in
-            window.location.href = 'login_page.html';
+            window.location.href = 'main_page.html'; // Redirect to main page for regular users
         }
     });
 };

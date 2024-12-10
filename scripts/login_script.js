@@ -1,60 +1,52 @@
 window.onload = function () {
     const loginForm = document.getElementById('login-form');
+
     if (loginForm) {
-        loginForm.addEventListener('submit', function (event) {
+        loginForm.addEventListener('submit', async function (event) {
             event.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
+
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value.trim();
             const loginError = document.getElementById('login-error');
             loginError.textContent = ''; // Clear previous errors
 
-            let storedLocal = null;
-            let isAdmin = false;
-
-            // Loop through all items in localStorage to find matching email with the correct prefix
-            for (let key in localStorage) {
-                if (localStorage.hasOwnProperty(key) && (key.startsWith('user_') || key.startsWith('admin_'))) {
-                    let userData = null;
-                    try {
-                        userData = JSON.parse(localStorage.getItem(key));
-                    } catch (error) {
-                        console.error(`Failed to parse item with key: ${key}`, error);
-                        continue; // Skip items that are not valid JSON
-                    }
-
-                    console.log('Checking key:', key, 'userData:', userData);
-
-                    // Check if the email matches
-                    if (userData && userData.email === email) {
-                        // Check for the correct prefix to determine if user is admin or regular user
-                        if (key.startsWith('admin_')) {
-                            isAdmin = true;  // This is an admin
-                        } else if (key.startsWith('user_')) {
-                            isAdmin = false; // This is a regular user
-                        }
-                        storedLocal = userData;
-                        break; // Stop once we find the matching user
-                    }
-                }
+            // Basic validation before sending the request
+            if (!email || !password) {
+                loginError.textContent = 'Please enter both email and password.';
+                return;
             }
 
-            // Validate password and proceed with login
-            if (storedLocal && storedLocal.password === password) {
-                console.log('Login success!'); // Debugging statement
-                // Clear previous login data
-                localStorage.removeItem('loggedInUser');
-                localStorage.removeItem('isAdminLoggedIn');
+            try {
+                // Send login credentials to the server
+                const response = await fetch('http://localhost:5000/api/users/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
 
-                // Set new login status based on user type
-                if (isAdmin) {
-                    localStorage.setItem('isAdminLoggedIn', 'true');
-                    window.location.href = 'admin_page.html'; // Redirect to admin page
+                if (response.ok) {
+                    const userData = await response.json();
+                    console.log('Login successful:', userData);
+
+                    // Store the logged-in user data in sessionStorage
+                    sessionStorage.setItem('loggedInUser', JSON.stringify(userData));
+
+                    // Redirect based on user role
+                    if (userData.role === 'admin') {
+                        window.location.href = 'admin_page.html'; // Redirect to admin page
+                    } else {
+                        window.location.href = 'main_page.html'; // Redirect to main page
+                    }
+                } else if (response.status === 401) {
+                    loginError.textContent = 'Invalid email or password. Please try again.';
                 } else {
-                    localStorage.setItem('loggedInUser', JSON.stringify(storedLocal));
-                    window.location.href = 'main_page.html'; // Redirect to main page
+                    loginError.textContent = 'An error occurred. Please try again later.';
                 }
-            } else {
-                loginError.textContent = 'Invalid email or password. Please try again.';
+            } catch (error) {
+                console.error('Error during login:', error);
+                loginError.textContent = 'Failed to connect to the server. Please try again later.';
             }
         });
     }

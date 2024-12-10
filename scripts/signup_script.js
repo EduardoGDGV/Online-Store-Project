@@ -1,12 +1,13 @@
 window.onload = function () {
     const signupForm = document.getElementById('signup-form');
+    
     if (signupForm) {
-        signupForm.addEventListener('submit', function (event) {
+        signupForm.addEventListener('submit', async function (event) {
             event.preventDefault();
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const confirmPassword = document.getElementById('confirm-password').value.trim();
             const signupError = document.getElementById('signup-error');
             const passwordError = document.getElementById('password-error');
 
@@ -19,68 +20,59 @@ window.onload = function () {
                 return;
             }
 
-            // Check if email already exists
-            if (isEmailInUse(email)) {
-                signupError.textContent = 'Email is already in use. Please use a different one.';
-            } else {
-                // Get the next available user ID based on the highest 'user_' ID stored
-                const newUserId = getNextId('user_');
+            // Validate email format
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                signupError.textContent = 'Please enter a valid email address.';
+                return;
+            }
 
-                // Create a new user object with additional fields
-                const user = {
-                    id: newUserId,
+            try {
+                // Check if email already exists
+                const emailCheckResponse = await fetch('http://localhost:5000/api/users/check-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const emailExists = await emailCheckResponse.json();
+
+                if (emailExists.exists) {
+                    signupError.textContent = 'Email is already in use. Please use a different one.';
+                    return;
+                }
+
+                // Create new user object
+                const newUser = {
                     name: name,
                     email: email,
-                    password: password,
-                    profilePic: '', // Initialize as empty
-                    address: '',    // Initialize as empty
-                    phone: ''       // Initialize as empty
-                };
+                    password: password, // Password should be hashed in the backend
+                    confirmPassword: confirmPassword,
+                    role: 'user', // Default role is 'user'
+                    profilePic: '', // Optionally send a profilePic if applicable
+                    address: '', // Optionally send an address if applicable
+                    phone: '' // Optionally send a phone number if applicable
+                };                
 
-                // Store the user in localStorage with the 'user_' prefix
-                localStorage.setItem(`user_${newUserId}`, JSON.stringify(user));
+                // Send the user data to the server to store in MongoDB
+                const response = await fetch('http://localhost:5000/api/users/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newUser),
+                });                
 
-                // Redirect to login page after successful signup
-                window.location.href = 'login_page.html';
+                if (response.ok) {
+                    // Redirect to login page after successful signup
+                    window.location.href = 'login_page.html';
+                } else {
+                    signupError.textContent = 'An error occurred during signup. Please try again later.';
+                }
+
+            } catch (error) {
+                console.error('Error during signup:', error);
+                signupError.textContent = 'Failed to connect to the server. Please try again later.';
             }
         });
-    }
-
-    // Function to check if the email is already in use
-    function isEmailInUse(email) {
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.startsWith('user_')) {
-                const storedItem = JSON.parse(localStorage.getItem(key));
-                if (storedItem && storedItem.email === email) {
-                    return true; // Email found, return true
-                }
-            }
-        }
-        return false; // No match found, return false
-    }
-
-    // Function to get the next available ID for the 'user_' prefix
-    function getNextId(prefix) {
-        let highestId = 0; // Default ID to start from 0
-
-        // Loop through all entries in localStorage
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            try {
-                const storedItem = JSON.parse(localStorage.getItem(key));
-
-                // Check if the key starts with the 'user_' prefix and if it has a valid ID
-                if (key.startsWith(prefix) && storedItem && storedItem.id) {
-                    highestId = Math.max(highestId, storedItem.id); // Get the highest ID for that prefix
-                }
-            } catch (error) {
-                console.warn(`Skipping non-JSON or invalid entry at key "${key}"`);
-            }
-        }
-
-        // Return the next available ID (highest ID + 1)
-        return highestId + 1;
     }
 
     // Toggle password visibility
