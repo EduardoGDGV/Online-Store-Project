@@ -61,7 +61,7 @@ router.post('/login', async (req, res) => {
             name: user.name,
             role: user.role || 'user',
             profilePic: user.profilePic,
-            address: user.address,
+            address: user.address, // Return detailed address
             phone: user.phone,
         });
 
@@ -71,7 +71,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Signup with optional profile picture upload
+// Signup Route
 router.post('/signup', upload.single('profilePic'), async (req, res) => {
     const { name, email, password, confirmPassword, role = 'user', address, phone } = req.body;
 
@@ -97,7 +97,7 @@ router.post('/signup', upload.single('profilePic'), async (req, res) => {
             password: hashedPassword,
             role: role,
             profilePic: req.file ? req.file.path : '', // Save file path if uploaded
-            address: address || '',
+            address: address ? JSON.parse(address) : {}, // Parse address JSON
             phone: phone || '',
         });
 
@@ -171,19 +171,19 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Update user profile with optional profile picture upload
+// Update user
 router.put('/:id', upload.single('profilePic'), async (req, res) => {
     const { name, email, password, address, phone } = req.body;
     const profilePic = req.file ? req.file.path : undefined; // Optional new profile picture
 
     try {
         const updateData = {
-            name,
-            email,
-            address,
-            phone,
-            password, // Hash new password if provided
+            ...(name && { name }),
+            ...(email && { email }),
+            ...(phone && { phone }),
+            ...(password && { password: await bcrypt.hash(String(password), 10) }), // Hash new password if provided
             ...(profilePic && { profilePic }), // Update profilePic if new image is uploaded
+            ...(address && { address: typeof address === 'string' ? JSON.parse(address) : address }) // Parse and update address only if it's a string
         };
 
         const updatedUser = await User.findByIdAndUpdate(req.params.id, updateData, { new: true });

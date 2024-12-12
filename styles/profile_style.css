@@ -35,6 +35,27 @@
     margin: 8px 0;
 }
 
+/* Address List Styles */
+#profile-info-display ul {
+    list-style: none; /* Remove bullets */
+    padding: 0;
+    margin: 0;
+    margin-left: 25px;
+}
+
+#profile-info-display ul li {
+    text-align: left; /* Align text to the left */
+    font-size: 16px; /* Match label font size */
+    color: #555; /* Consistent text color */
+    margin-bottom: 8px; /* Spacing between items */
+    line-height: 1.5; /* Improve readability */
+}
+
+#profile-info-display ul li span {
+    font-weight: 500; /* Highlight the dynamic content */
+    color: #333; /* Make the dynamic content stand out */
+}
+
 /* Profile Photo Section */
 .profile-photo {
     margin-bottom: 20px;
@@ -58,21 +79,32 @@
     text-align: left;
 }
 
+/* Updated Form Styles */
 .form-group label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px; /* Increased margin for consistency */
     font-size: 16px;
+    font-weight: 500; /* Slightly bold for better readability */
     color: #333;
 }
 
 .form-group input {
     width: 100%;
-    padding: 10px;
+    padding: 12px; /* Adjusted padding for better alignment */
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
+    background-color: #f9f9f9; /* Light background for contrast */
     box-sizing: border-box;
+    transition: border-color 0.3s;
 }
+
+.form-group input:focus {
+    border-color: #007bff; /* Focus state matches button hover */
+    outline: none;
+    background-color: #fff;
+}
+
 
 /* Buttons */
 .save-btn, .cancel-btn, .edit-btn, .logout {

@@ -1,17 +1,15 @@
 window.onload = function () {
-    // Check if the user is logged in by checking session
     const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+    const loader = document.querySelector('.loader');
+    const profileSection = document.querySelector('.profile-box');
 
-    // If no user is logged in, redirect to the landing page
     if (!loggedInUser) {
         window.location.href = 'login_page.html';
         return;
     }
 
-    const profileSection = document.querySelector('.profile-box');
     displayProfileContent();
 
-    // Fetch the user's profile from the database
     async function fetchUserProfile() {
         try {
             const response = await fetch(`http://localhost:5000/api/users/${loggedInUser.id}`);
@@ -23,6 +21,7 @@ window.onload = function () {
     }
 
     async function displayProfileContent() {
+        loader.style.display = 'block'; // Show loader
         const user = await fetchUserProfile();
 
         if (!user) {
@@ -30,14 +29,22 @@ window.onload = function () {
             return;
         }
 
-        // Display profile with the user's data
+        const { street = 'N/A', city = 'N/A', state = 'N/A', zip = 'N/A', country = 'N/A' } = user.address || {};
+
         profileSection.innerHTML = `
             <h2>My Profile</h2>
             <div id="profile-info-display">
-                <img src="${user.profilePic || ''}" alt="Profile Picture" class="profile-pic" width="100" height="100">
+                <img src="${user.profilePic || 'images/default_placeholder.png'}" alt="Profile Picture" class="profile-pic">
                 <p><strong>Name:</strong> <span id="display-name">${user.name || 'N/A'}</span></p>
                 <p><strong>Email:</strong> <span id="display-email">${user.email || 'N/A'}</span></p>
-                <p><strong>Address:</strong> <span id="display-address">${user.address || 'N/A'}</span></p>
+                <p><strong>Address:</strong></p>
+                <ul>
+                    <li>Street: <span id="display-street">${street || 'N/A'}</span></li>
+                    <li>City: <span id="display-city">${city || 'N/A'}</span></li>
+                    <li>State: <span id="display-state">${state || 'N/A'}</span></li>
+                    <li>ZIP: <span id="display-zip">${zip || 'N/A'}</span></li>
+                    <li>Country: <span id="display-country">${country || 'N/A'}</span></li>
+                </ul>
                 <p><strong>Phone Number:</strong> <span id="display-number">${user.phone || 'N/A'}</span></p>
             </div>
             <div class="button-group">
@@ -46,21 +53,15 @@ window.onload = function () {
             </div>
         `;
 
-        // Attach event listeners to Edit and Logout buttons
+        loader.style.display = 'none'; // Hide loader after content is loaded
+
         document.getElementById('edit-profile-btn').addEventListener('click', displayEditForm);
         document.getElementById('logout').addEventListener('click', logoutUser);
-
-        const loadIcon = document.getElementById('loader');
-        loadIcon.style.display = 'none';  // Hide loader
     }
 
     async function displayEditForm() {
         const user = await fetchUserProfile();
-
-        if (!user) {
-            alert('Unable to load user data for editing.');
-            return;
-        }
+        const { street = '', city = '', state = '', zip = '', country = '' } = user.address || {};
 
         profileSection.innerHTML = `
             <h2>Edit Profile</h2>
@@ -71,15 +72,31 @@ window.onload = function () {
                 </div>
                 <div class="form-group">
                     <label for="name">Name</label>
-                    <input type="text" id="name" value="${user.name || ''}">
+                    <input type="text" id="name" value="${user.name}">
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" value="${user.email || ''}">
+                    <input type="email" id="email" value="${user.email}">
                 </div>
                 <div class="form-group">
-                    <label for="address">Address</label>
-                    <input type="text" id="address" value="${user.address || ''}">
+                    <label for="street">Street</label>
+                    <input type="text" id="street" value="${street}">
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" value="${city}">
+                </div>
+                <div class="form-group">
+                    <label for="state">State</label>
+                    <input type="text" id="state" value="${state}">
+                </div>
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <input type="text" id="country" value="${country}">
+                </div>
+                <div class="form-group">
+                    <label for="zip">ZIP Code</label>
+                    <input type="text" id="zip" value="${zip}">
                 </div>
                 <div class="form-group">
                     <label for="phone">Phone Number</label>
@@ -92,68 +109,50 @@ window.onload = function () {
             </form>
         `;
 
-        // Attach event listeners for save and cancel buttons
         document.querySelector('.save-btn').addEventListener('click', saveChanges);
         document.querySelector('.cancel-btn').addEventListener('click', displayProfileContent);
     }
 
     async function saveChanges() {
-        const user = await fetchUserProfile();
-
-        if (!user) {
-            alert('Unable to load user data for saving changes.');
-            return;
-        }
-
-        // Retrieve values from the form inputs
-        const profilePicInput = document.getElementById('profilePic').files[0];
         const updatedUser = {
-            id: user._id,
             name: document.getElementById('name').value,
             email: document.getElementById('email').value,
-            password: user.password,
-            role: user.role,
-            profilePic: user.profilePic,
-            address: document.getElementById('address').value,
             phone: document.getElementById('phone').value,
+            address: {
+                street: document.getElementById('street').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                zip: document.getElementById('zip').value,
+                country: document.getElementById('country').value,
+            },
+            // Profile Picture upload can be handled here if needed
         };
-
-        // If a new profile picture is selected, convert it to a base64 string
-        if (profilePicInput) {
-            const reader = new FileReader();
-            reader.onloadend = async function () {
-                updatedUser.profilePic = reader.result; // Base64 string of the image
-                await updateProfile(updatedUser); // Send updated user data to the server
-            };
-            reader.readAsDataURL(profilePicInput); // Read the file as base64
-        } else {
-            updatedUser.profilePic = user.profilePic || 'images/default_placeholder.png';
-            await updateProfile(updatedUser); // Send updated user data without the picture
-        }
-
-        // Reload the page to reflect changes
-        window.location.reload();
-    }
-
-    async function updateProfile(updatedUser) {
+    
         try {
             const response = await fetch(`http://localhost:5000/api/users/${loggedInUser.id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify(updatedUser),
             });
-
+    
             if (response.ok) {
-                // Update localStorage to reflect changes (optional)
-                sessionStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
-                alert('Profile updated successfully!');
+                // Update sessionStorage with the updated user data
+                sessionStorage.setItem('loggedInUser', JSON.stringify({
+                    ...loggedInUser,
+                    ...updatedUser, // Merge updated data with the existing data
+                }));
+    
+                alert('Profile updated successfully');
+                displayProfileContent(); // Re-display the profile page
             } else {
-                alert('Failed to update profile. Please try again.');
+                alert('Failed to update profile');
             }
         } catch (error) {
-            console.error('Error updating user profile:', error);
+            console.error('Error saving profile changes:', error);
         }
-    }
+    }    
 
     function logoutUser() {
         sessionStorage.removeItem('loggedInUser');

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Importing the 'Poiret One' font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poiret+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="styles/order_confirmation.css">
+    <link rel="stylesheet" href="styles/general_style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <a href="landing_page.html">
+                <h1>STYLACT</h1>
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="main_page.html"><span class="material-symbols-outlined">home</span></a></li>
+                <li><a href="cart_page.html"><span class="material-symbols-outlined">shopping_cart</span></a></li>
+                <li><a href="profile_page.html"><span class="material-symbols-outlined">account_circle</span></a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main content -->
+    <main>
+        <div class="confirmation-container">
+            <h2>Order Confirmation</h2>
+            <div class="order-details">
+                <p><strong>Thank you for your order!</strong></p>
+                <p><strong>Order ID:</strong> <span id="order-id"></span></p>
+                <p><strong>Total Amount:</strong> <span id="order-amount"></span></p>
+                <p><strong>Status:</strong> <span class="order-status"><span></p>
+
+                <h3>Items Ordered:</h3>
+                <div id="order-items"></div>
+
+                <h3>Shipping Address:</h3>
+                <div id="shipping-address"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Stylact Store. All Rights Reserved.</p>
+    </footer>
+
+    <script src="scripts/order_confirmation.js"></script>
+</body>
+</html>

@@ -72,6 +72,31 @@ router.delete('/:userId', async (req, res) => {
     }
 });
 
+// Remove all items from Cart
+router.delete('/:userId/all', async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const cart = await Cart.findOne({ user: userId });
+
+        if (!cart) {
+            return res.status(404).json({ message: 'Cart not found' });
+        }
+
+        // Remove all items from the cart
+        cart.items = [];
+
+        // Recalculate the total cost (which will now be 0)
+        cart.totalCost = 0;
+
+        await cart.save();
+        res.status(200).json(cart);
+    } catch (error) {
+        console.error('Error removing all items from cart:', error);
+        res.status(500).json({ message: 'Error removing all items from cart' });
+    }
+});
+
 // Update Item Quantity in Cart (backend route)
 router.patch('/:userId', async (req, res) => {
     const { userId } = req.params;
