@@ -79,6 +79,15 @@ This project implements a functional e-commerce store that allows users to brows
     email: john@example.com  
     password: password123
     ```
+    ```bash
+    email: jane@example.com  
+    password: password123
+    ```
+    ```bash
+    email: alice@example.com  
+    password: password123
+    ```
+    
 - **Profile Page and SessionStorage:**  
   The user profile page now utilizes `sessionStorage` to store the logged-in user information. This ensures that the user's details are persistent during their session and are easily accessible without repeated server requests.
   
