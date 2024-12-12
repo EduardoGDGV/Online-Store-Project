@@ -21,7 +21,7 @@ window.onload = async function () {
     // Add event listener for search input
     searchBar.addEventListener('input', function () {
         const query = searchBar.value.toLowerCase(); // Get search query
-        const filteredProducts = allProducts.filter(product => {
+        filteredProducts = allProducts.filter(product => {
             return product.name.toLowerCase().includes(query) || product.description.toLowerCase().includes(query);
         });
         displayProducts(filteredProducts, loggedInUser.id); // Display filtered products
@@ -200,7 +200,10 @@ async function addToCart(product, userId) {
         if (response.ok) {
             const updatedCart = await response.json();
             console.log('Cart updated:', updatedCart);
-            await displayProducts(userId); // Refresh products to reflect cart changes
+
+            // Fetch and display products initially
+            let allProducts = await fetchProducts();
+            await displayProducts(allProducts, userId); // Refresh products to reflect cart changes
         } else {
             console.error('Error adding product to cart:', await response.text());
             alert('Failed to add product to cart.');
@@ -238,8 +241,10 @@ async function updateCartQuantity(productId, change) {
             const updatedCart = await response.json();
             console.log('Cart updated:', updatedCart);
 
+            // Fetch and display products initially
+            let allProducts = await fetchProducts();
             // Re-fetch and display products to reflect updated cart state
-            await displayProducts(loggedInUser.id);
+            await displayProducts(allProducts, loggedInUser.id);
         } else {
             console.error('Error updating cart:', await response.text());
             alert('Failed to update cart quantity.');
