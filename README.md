@@ -54,6 +54,9 @@ This project implements a functional e-commerce store that allows users to brows
   - Admin account details (id, name, email, phone, password).
   - Product information (name, photo, description, price, stock, quantity sold).
 
+- **SessionStorage for Cart and Order Data:**  
+  In addition to user information, shopping cart data is stored in `sessionStorage`, enabling quick access to the cart during the user's session. Similarly, when a user completes an order, the order details (including products purchased, total cost, etc.) are temporarily stored in `sessionStorage` until they are finalized and saved to the MongoDB database. This ensures a seamless checkout experience for the user.
+  
 - **Dynamic Search and Favorites:**  
   The product search functionality is dynamic, enabling users to search for products as they type, making the browsing experience more intuitive. Additionally, users can add products to their favorites list, allowing easy access to previously viewed or purchased products.
 
@@ -71,9 +74,17 @@ This project implements a functional e-commerce store that allows users to brows
     email:     admin@example.com
     password:  admin
     ```
-- To enter as one of the default users, use the following credentials:
+- To enter as one of the default users, use one of the following credentials:
     ```bash
     email: john@example.com  
+    password: password123
+    ```
+    ```bash
+    email: jane@example.com 
+    password: password123
+    ```
+    ```bash
+    email: alice@example.com  
     password: password123
     ```
 - **Profile Page and SessionStorage:**  
@@ -111,6 +122,7 @@ We will conduct the following tests to ensure functionality:
 **Tests on `sessionStorage`:**
 - Verified that user login stores their data in `sessionStorage`, allowing persistent access across pages.
 - Confirmed that the `sessionStorage` is cleared upon logout.
+- Verified that cart and order information is stored in `sessionStorage` during the shopping session, and this data is available until the order is completed or the user logs out.
 
 **Tests on MongoDB Integration:**
 - Verified that data is correctly stored and retrieved from MongoDB for both users and products.
@@ -121,67 +133,66 @@ We will conduct the following tests to ensure functionality:
 ## Build Procedures
 
 1. **Prerequisites:**  
-   - Ensure **Node.js** and **npm** are properly installed and functional on your system.  
-   - Install **MongoDB** and ensure it is running and connected to the application (either locally or through a cloud service like MongoDB Atlas).  
+     - Ensure **Node.js** and **npm** are properly installed and functional on your system.  
+     - Install **MongoDB** and ensure it is running and connected to the application (either locally or through a cloud service like MongoDB Atlas).  
    
 2. **Download the Repository Files:**  
-   To get started, download the repository files to your local machine. You can do this by either cloning the repository using Git or downloading the ZIP file from GitHub:
-   - Clone the repository using Git:  
-     ```bash
-     git clone https://github.com/yourusername/yourproject.git
-     ```
-   - Or download the ZIP file from GitHub, extract it, and navigate to the project folder in your terminal.
+     To get started, download the repository files to your local machine. You can do this by either cloning the repository using Git or downloading the ZIP file from GitHub:
+     - Clone the repository using Git:  
+       ```bash
+       git clone https://github.com/yourusername/yourproject.git
+       ```
+     - Or download the ZIP file from GitHub, extract it, and navigate to the project folder in your terminal.
 
 3. **Navigate to the Project Directory:**
-  After downloading or cloning the repository, open a terminal and navigate to the project directory:
-    ```bash
-    cd yourproject
-    ```
+    After downloading or cloning the repository, open a terminal and navigate to the project directory:
+      ```bash
+      cd yourproject
+      ```
 
 4. **Install Dependencies:**
-  Once inside the project directory, install all the required dependencies using npm:
-    ```bash
-    npm install
-    ```
+    Once inside the project directory, install all the required dependencies using npm:
+      ```bash
+      npm install
+      ```
 
 5. **Test MongoDB Connection:**
-  Make sure MongoDB is installed and running on your machine. If you're using a local setup, start the MongoDB server by running:
-    ```bash
-    mongod
-    ```
-  Alternatively, ensure that the application is connected to MongoDB Atlas or another cloud-based service if you prefer a hosted database.
+    Make sure MongoDB is installed and running on your machine. If you're using a local setup, start the MongoDB server by running:
+      ```bash
+      mongod
+      ```
+    Alternatively, ensure that the application is connected to MongoDB Atlas or another cloud-based service if you prefer a hosted database.
   
 6. **Start the Node.js Server:**
-  After the dependencies are installed, you can start the Node.js server with the following command:
-    ```bash
-    npm start
-    ```
-  This will start the server and run the application locally (usually accessible at `http://localhost:5000`).
+    After the dependencies are installed, you can start the Node.js server with the following command:
+      ```bash
+      npm start
+      ```
+    This will start the server and run the application locally (usually accessible at `http://localhost:5000`).
 
 7. **Open the Project in a Browser:**
-  After starting the server and ensuring MongoDB is connected, open the `landing_page.html` file in a browser to view and test the application. You can open it directly via the file explorer or navigate to the file from your terminal, for example:
-    ```bash
-    open landing_page.html
-    ```
+    After starting the server and ensuring MongoDB is connected, open the `landing_page.html` file in a browser to view and test the application. You can open it directly via the file explorer or navigate to the file from your terminal, for example:
+      ```bash
+      open landing_page.html
+      ```
 8. **Test the Application:**
-  Once the page is loaded, perform the following tests to ensure the application is functioning as expected:
-  
-  - Verify that the dynamic search bar is working and updating results in real-time as you type.
-  - Test user login and profile management, ensuring you can edit user details successfully.
-  - Log in as the admin (using the default credentials) to test product and user management features.
-  - Ensure the shopping cart, order processing, and product display functions work as expected.
+    Once the page is loaded, perform the following tests to ensure the application is functioning as expected:
+    
+    - Verify that the dynamic search bar is working and updating results in real-time as you type.
+    - Test user login and profile management, ensuring you can edit user details successfully.
+    - Log in as the admin (using the default credentials) to test product and user management features.
+    - Ensure the shopping cart, order processing, and product display functions work as expected.
     
 9. **Admin Credentials for Testing:**
-  To log in as the default admin, use the following credentials:
-    ```bash
-    email: admin@example.com  
-    password: admin
-    ```
+    To log in as the default admin, use the following credentials:
+      ```bash
+      email: admin@example.com  
+      password: admin
+      ```
 
 10. **User Credentials for Testing:**
-  To log in as one of the default users, use the following credentials:
-    ```bash
-    email: john@example.com  
-    password: password123
-    ```
-
+    To log in as one of the default users, use the following credentials:
+      ```bash
+      email: john@example.com  
+      password: password123
+      ```
