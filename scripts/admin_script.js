@@ -96,12 +96,23 @@ document.addEventListener('DOMContentLoaded', function () {
             if (Array.isArray(customers)) {
                 customers.forEach(customer => {
                     const row = document.createElement('tr');
+
+                    const addressDropdown = customer.address ? `
+                        <select>
+                            <option>Street: ${customer.address.street || '-'}</option>
+                            <option>City: ${customer.address.city || '-'}</option>
+                            <option>State: ${customer.address.state || '-'}</option>
+                            <option>Zip: ${customer.address.zip || '-'}</option>
+                            <option>Country: ${customer.address.country || '-'}</option>
+                        </select>
+                    ` : '<select disabled><option>No Address Available</option></select>';
+
                     row.innerHTML = `
                         <td><img src="${customer.profilePic || 'default-placeholder.png'}" alt="Profile Picture" width="50" height="50"></td>
                         <td>${customer.name}</td>
                         <td>${customer.email}</td>
-                        <td>${customer.address || ''}</td>
-                        <td>${customer.phone || ''}</td>
+                        <td>${addressDropdown}</td>
+                        <td>${customer.phone || '-'}</td>
                         <td>
                             <button class="delete-btn" data-id="${customer.id}">Delete</button>
                         </td>
@@ -110,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     customersBody.appendChild(row);
                 });
             } else {
-                console.error('Received data is not an array', admins);
+                console.error('Received data is not an array', customers);
             }
         } catch (error) {
             console.error('Error fetching customers:', error);
@@ -170,12 +181,23 @@ document.addEventListener('DOMContentLoaded', function () {
             if (Array.isArray(admins)) {
                 admins.forEach(admin => {
                     const row = document.createElement('tr');
+
+                    const addressDropdown = admin.address ? `
+                        <select>
+                            <option>Street: ${admin.address.street || '-'}</option>
+                            <option>City: ${admin.address.city || '-'}</option>
+                            <option>State: ${admin.address.state || '-'}</option>
+                            <option>Zip: ${admin.address.zip || '-'}</option>
+                            <option>Country: ${admin.address.country || '-'}</option>
+                        </select>
+                    ` : '<select disabled><option>No Address Available</option></select>';
+
                     row.innerHTML = `
                         <td><img src="${admin.profilePic || 'default-placeholder.png'}" alt="Profile Picture" width="50" height="50"></td>
                         <td>${admin.name}</td>
                         <td>${admin.email}</td>
-                        <td>${admin.address || ''}</td>
-                        <td>${admin.phone || ''}</td>
+                        <td>${addressDropdown}</td>
+                        <td>${admin.phone || '-'}</td>
                         <td>
                             <button class="delete-btn" data-id="${admin.id}" ${admin.email === 'admin@example.com' ? 'disabled' : ''}>
                                 ${admin.email === 'admin@example.com' ? 'Cannot Delete' : 'Delete'}
@@ -314,8 +336,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div id="register-admin-password-error" class="error-message"></div>
             </div>
             <div class="form-group">
-                <label for="admin-address">Address</label>
-                <input type="text" id="admin-address">
+                <label for="admin-street">Street</label>
+                <input type="text" id="admin-street">
+            </div>
+            <div class="form-group">
+                <label for="admin-city">City</label>
+                <input type="text" id="admin-city">
+            </div>
+            <div class="form-group">
+                <label for="admin-state">State</label>
+                <input type="text" id="admin-state">
+            </div>
+            <div class="form-group">
+                <label for="admin-zip">Zip Code</label>
+                <input type="text" id="admin-zip">
+            </div>
+            <div class="form-group">
+                <label for="admin-country">Country</label>
+                <input type="text" id="admin-country">
             </div>
             <div class="form-group">
                 <label for="admin-phone">Phone</label>
@@ -340,9 +378,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const email = document.getElementById('admin-email').value;
         const password = document.getElementById('admin-password').value;
         const confirmPassword = document.getElementById('admin-confirm-password').value;
-        const address = document.getElementById('admin-address').value;
+        const street = document.getElementById('admin-street').value;
+        const city = document.getElementById('admin-city').value;
+        const state = document.getElementById('admin-state').value;
+        const zip = document.getElementById('admin-zip').value;
+        const country = document.getElementById('admin-country').value;
         const phone = document.getElementById('admin-phone').value;
-        const profilePic = document.getElementById('admin-profile-pic').files[0]; // Get file input
+        const profilePic = document.getElementById('admin-profile-pic').files[0];
 
         // Email existence check
         const emailExists = await checkIfEmailExists(email);
@@ -365,10 +407,14 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('password', password);
         formData.append('role', 'admin');
         formData.append('confirmPassword', confirmPassword);
-        formData.append('address', address || ''); // Default to empty if not provided
-        formData.append('phone', phone || ''); // Default to empty if not provided
+        formData.append('address.street', street || '');
+        formData.append('address.city', city || '');
+        formData.append('address.state', state || '');
+        formData.append('address.zip', zip || '');
+        formData.append('address.country', country || '');
+        formData.append('phone', phone || '');
         if (profilePic) {
-            formData.append('profilePic', profilePic); // Append file only if provided
+            formData.append('profilePic', profilePic);
         }
 
         try {
@@ -421,8 +467,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div id="register-customer-password-error" class="error-message"></div>
             </div>
             <div class="form-group">
-                <label for="customer-address">Address</label>
-                <input type="text" id="customer-address">
+                <label for="customer-street">Street</label>
+                <input type="text" id="customer-street">
+            </div>
+            <div class="form-group">
+                <label for="customer-city">City</label>
+                <input type="text" id="customer-city">
+            </div>
+            <div class="form-group">
+                <label for="customer-state">State</label>
+                <input type="text" id="customer-state">
+            </div>
+            <div class="form-group">
+                <label for="customer-zip">Zip Code</label>
+                <input type="text" id="customer-zip">
+            </div>
+            <div class="form-group">
+                <label for="customer-country">Country</label>
+                <input type="text" id="customer-country">
             </div>
             <div class="form-group">
                 <label for="customer-phone">Phone</label>
@@ -437,7 +499,7 @@ document.addEventListener('DOMContentLoaded', function () {
         mainContent.appendChild(form);
 
         form.addEventListener('submit', handleRegisterCustomer);
-    }    
+    }
 
     // Handle Register Customer Form Submission
     async function handleRegisterCustomer(event) {
@@ -447,9 +509,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const email = document.getElementById('customer-email').value;
         const password = document.getElementById('customer-password').value;
         const confirmPassword = document.getElementById('customer-confirm-password').value;
-        const address = document.getElementById('customer-address').value;
+        const street = document.getElementById('customer-street').value;
+        const city = document.getElementById('customer-city').value;
+        const state = document.getElementById('customer-state').value;
+        const zip = document.getElementById('customer-zip').value;
+        const country = document.getElementById('customer-country').value;
         const phone = document.getElementById('customer-phone').value;
-        const profilePic = document.getElementById('customer-profile-pic').files[0]; // File input for profile picture
+        const profilePic = document.getElementById('customer-profile-pic').files[0];
 
         // Validate required fields
         if (!name || !email || !password || !confirmPassword) {
@@ -468,8 +534,12 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('email', email);
         formData.append('password', password);
         formData.append('confirmPassword', confirmPassword);
-        formData.append('address', address || ''); // Default to empty if not provided
-        formData.append('phone', phone || ''); // Default to empty if not provided
+        formData.append('address.street', street || '');
+        formData.append('address.city', city || '');
+        formData.append('address.state', state || '');
+        formData.append('address.zip', zip || '');
+        formData.append('address.country', country || '');
+        formData.append('phone', phone || '');
         if (profilePic) {
             formData.append('profilePic', profilePic); // Append file only if provided
         }

@@ -25,6 +25,14 @@ window.onload = async function () {
     initPaymentSelection();
 };
 
+// Function to calculate and display the total price (use backend-provided totalCost)
+async function calculateTotal() {
+    const cart = await fetchCartData();
+
+    // Use backend-provided totalCost
+    return itemTotal = cart.totalCost;
+}
+
 // Function to fetch cart data from MongoDB
 async function fetchCartData() {
     const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
@@ -48,12 +56,6 @@ async function fetchCartData() {
         console.error("Error fetching cart data:", error);
         throw new Error("Failed to fetch cart data.");
     }
-}
-
-// Function to calculate the total price (directly use totalCost)
-async function calculateTotal() {
-    const cart = await fetchCartData();
-    return cart.totalCost; // Use the backend-provided totalCost
 }
 
 // Function to display selected payment form
@@ -152,30 +154,21 @@ async function confirmPurchase() {
             return;
         }
 
-        const cart = await fetchCartData(); // Fetch cart items
-
-        // Check if cart.items is an array before using .map()
-        if (!Array.isArray(cart.items)) {
-            throw new Error("Cart items are not in the correct format.");
-        }
-
-        const updatedItems = cart.items.map(item => {
-            // Ensure product details are available in each item
-            if (item.product && item.product.price && item.quantity) {
-                item.price = item.product.price; // Use the product price
-                item.productId = item.product._id; // Ensure productId is set
-            }
-            return item;
-        });
-
-        const totalAmount = cart.totalCost; // Use the cart's total cost
+        const cart = await fetchCartData(); // Fetch updated cart data
         const shippingCost = 5.00; // Default shipping cost
         const discount = 0.00; // Default discount
-        const total = totalAmount + shippingCost - discount;
+        const total = cart.totalCost + shippingCost - discount; // Correct total calculation
+
+        const updatedItems = cart.items.map(item => ({
+            product: item.product,
+            price: item.product.price,
+            quantity: item.quantity
+        }));
+
         const orderDetails = {
             userId: loggedInUser.id,
             items: updatedItems,
-            totalAmount: total,
+            totalAmount: total, // Use corrected total
             paymentMethod: paymentMethod,
             address: {
                 street: document.getElementById('street').value,
@@ -198,24 +191,21 @@ async function confirmPurchase() {
 
         if (response.ok) {
             const order = await response.json();
+            sessionStorage.setItem('orderId', order._id);
+            // Call the /payment endpoint to process the payment and update stock
             const paymentResponse = await fetch(`http://localhost:5000/api/orders/${order._id}/payment`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    paymentMethod,
-                    paymentDetails: {} // Add payment details as needed
-                })
+                body: JSON.stringify({ paymentMethod: paymentMethod })
             });
 
             if (paymentResponse.ok) {
                 alert("Purchase confirmed! Thank you for shopping with us.");
-                // Store the order id in sessionStorage
-                sessionStorage.setItem('orderId', order._id);
-                await clearCart();
+                await clearCart(); // Clear the cart after payment
                 window.location.href = 'order_confirmation.html';
             } else {
-                const paymentError = await paymentResponse.json();
-                alert(`Payment failed: ${paymentError.message}`);
+                const paymentErrorData = await paymentResponse.json();
+                alert(`Payment Error: ${paymentErrorData.message}`);
             }
         } else {
             const errorData = await response.json();
