@@ -15,7 +15,7 @@ window.onload = function () {
             passwordError.textContent = '';
 
             // Check if passwords match
-            if (password !== confirmPassword) {
+            if (String(password) !== String(confirmPassword)) {
                 passwordError.textContent = 'Passwords do not match. Please try again.';
                 return;
             }
@@ -46,13 +46,13 @@ window.onload = function () {
                 const newUser = {
                     name: name,
                     email: email,
-                    password: password, // Password should be hashed in the backend
-                    confirmPassword: confirmPassword,
+                    password: String(password), // Password should be hashed in the backend
+                    confirmPassword: String(confirmPassword),
                     role: 'user', // Default role is 'user'
                     profilePic: '', // Optionally send a profilePic if applicable
                     address: '', // Optionally send an address if applicable
                     phone: '' // Optionally send a phone number if applicable
-                };                
+                };               
 
                 // Send the user data to the server to store in MongoDB
                 const response = await fetch('http://localhost:5000/api/users/signup', {

@@ -26,15 +26,15 @@ async function calculateTotal() {
 
 // Function to fetch cart data from MongoDB
 async function fetchCartData() {
-    const loggedInUserId = localStorage.getItem('loggedInUserId');
-    if (!loggedInUserId) {
+    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+    if (!loggedInUser) {
         alert("You need to be logged in to proceed with the payment.");
-        window.location.href = 'login.html';
+        window.location.href = 'login_page.html';
         return [];
     }
 
     try {
-        const response = await fetch(`/api/carts/${loggedInUserId}`);
+        const response = await fetch(`http://localhost:5000/api/cart/${loggedInUser.id}`);
         const cartData = await response.json();
         return cartData.items || [];
     } catch (error) {
@@ -75,14 +75,13 @@ function selectPaymentMethod(method) {
 
 // Function to handle confirmation
 async function confirmPurchase() {
-    const loggedInUserId = localStorage.getItem('loggedInUserId');
-    const totalAmount = parseFloat(document.getElementById('total-display').textContent.slice(1)); // Remove '$' and parse
-
-    if (!loggedInUserId) {
+    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+    if (!loggedInUser) {
         alert("You need to be logged in to complete the purchase.");
-        return;
+        window.location.href = 'login_page.html';
+        return [];
     }
-
+    const totalAmount = parseFloat(document.getElementById('total-display').textContent.slice(1)); // Remove '$' and parse
     const paymentMethod = document.querySelector('.payment-option.selected')?.dataset.method;
 
     if (!paymentMethod) {
@@ -91,7 +90,7 @@ async function confirmPurchase() {
     }
 
     const orderDetails = {
-        userId: loggedInUserId,
+        userId: loggedInUser.id,
         items: await fetchCartData(),
         totalAmount,
         paymentMethod,
@@ -100,7 +99,7 @@ async function confirmPurchase() {
     };
 
     try {
-        const response = await fetch('/api/orders', {
+        const response = await fetch('http://localhost:5000/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderDetails)
@@ -122,11 +121,15 @@ async function confirmPurchase() {
 
 // Function to clear the cart after purchase
 async function clearCart() {
-    const loggedInUserId = localStorage.getItem('loggedInUserId');
-    if (!loggedInUserId) return;
+    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+    if (!loggedInUser) {
+        alert("You need to be logged in to complete the purchase.");
+        window.location.href = 'login_page.html';
+        return [];
+    }
 
     try {
-        await fetch(`/api/carts/${loggedInUserId}`, {
+        await fetch(`http://localhost:5000/api/cart/${loggedInUser.id}`, {
             method: 'DELETE'
         });
     } catch (error) {

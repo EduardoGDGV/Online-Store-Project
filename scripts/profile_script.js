@@ -1,10 +1,10 @@
 window.onload = function () {
-    // Check if the user is logged in by checking session (or localStorage for simplicity)
-    const loggedInUserId = localStorage.getItem('loggedInUserId');  // Save user ID in localStorage after login
+    // Check if the user is logged in by checking session
+    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
 
     // If no user is logged in, redirect to the landing page
-    if (!loggedInUserId && !isAdminLoggedIn) {
-        window.location.href = 'landing_page.html';
+    if (!loggedInUser) {
+        window.location.href = 'login_page.html';
         return;
     }
 
@@ -14,7 +14,7 @@ window.onload = function () {
     // Fetch the user's profile from the database
     async function fetchUserProfile() {
         try {
-            const response = await fetch(`/api/users/${loggedInUserId}`);
+            const response = await fetch(`http://localhost:5000/api/users/${loggedInUser.id}`);
             const user = await response.json();
             return user;
         } catch (error) {
@@ -85,10 +85,6 @@ window.onload = function () {
                     <label for="phone">Phone Number</label>
                     <input type="text" id="phone" value="${user.phone || ''}">
                 </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password">
-                </div>
                 <div class="button-group">
                     <button type="button" class="save-btn">Save Changes</button>
                     <button type="button" class="cancel-btn">Cancel</button>
@@ -112,11 +108,14 @@ window.onload = function () {
         // Retrieve values from the form inputs
         const profilePicInput = document.getElementById('profilePic').files[0];
         const updatedUser = {
+            id: user._id,
             name: document.getElementById('name').value,
             email: document.getElementById('email').value,
+            password: user.password,
+            role: user.role,
+            profilePic: user.profilePic,
             address: document.getElementById('address').value,
             phone: document.getElementById('phone').value,
-            password: document.getElementById('password').value || user.password, // Keep the old password if no new one
         };
 
         // If a new profile picture is selected, convert it to a base64 string
@@ -128,7 +127,7 @@ window.onload = function () {
             };
             reader.readAsDataURL(profilePicInput); // Read the file as base64
         } else {
-            updatedUser.profilePic = user.profilePic || 'default-placeholder.png';
+            updatedUser.profilePic = user.profilePic || 'images/default_placeholder.png';
             await updateProfile(updatedUser); // Send updated user data without the picture
         }
 
@@ -138,7 +137,7 @@ window.onload = function () {
 
     async function updateProfile(updatedUser) {
         try {
-            const response = await fetch(`/api/users/${loggedInUserId}`, {
+            const response = await fetch(`http://localhost:5000/api/users/${loggedInUser.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedUser),
@@ -146,7 +145,7 @@ window.onload = function () {
 
             if (response.ok) {
                 // Update localStorage to reflect changes (optional)
-                localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
+                sessionStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
                 alert('Profile updated successfully!');
             } else {
                 alert('Failed to update profile. Please try again.');
@@ -157,7 +156,7 @@ window.onload = function () {
     }
 
     function logoutUser() {
-        localStorage.removeItem('loggedInUserId');
+        sessionStorage.removeItem('loggedInUser');
         window.location.href = 'landing_page.html';
     }
 };

@@ -45,13 +45,14 @@ router.post('/login', async (req, res) => {
 
     try {
         const user = await User.findOne({ email });
+
         if (!user) {
             return res.status(401).json({ message: 'Invalid email or password.' });
         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await bcrypt.compare(String(password), user.password);
         if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Invalid email or password.' });
+            return res.status(401).json({ message: 'Passwords do not match.' });
         }
 
         res.json({
@@ -63,6 +64,7 @@ router.post('/login', async (req, res) => {
             address: user.address,
             phone: user.phone,
         });
+
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error.' });
@@ -87,13 +89,13 @@ router.post('/signup', upload.single('profilePic'), async (req, res) => {
             return res.status(400).json({ message: 'Passwords do not match.' });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(String(password), 10);
 
         const newUser = new User({
-            name,
-            email,
+            name: name,
+            email: email,
             password: hashedPassword,
-            role,
+            role: role,
             profilePic: req.file ? req.file.path : '', // Save file path if uploaded
             address: address || '',
             phone: phone || '',
@@ -180,7 +182,7 @@ router.put('/:id', upload.single('profilePic'), async (req, res) => {
             email,
             address,
             phone,
-            ...(password && { password: await bcrypt.hash(password, 10) }), // Hash new password if provided
+            password, // Hash new password if provided
             ...(profilePic && { profilePic }), // Update profilePic if new image is uploaded
         };
 

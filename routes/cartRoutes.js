@@ -6,8 +6,9 @@ const User = require('../models/User');
 const router = express.Router();
 
 // Add Item to Cart
-router.post('/add', async (req, res) => {
-    const { userId, productId, quantity } = req.body;
+router.post('/:userId', async (req, res) => {
+    const { userId } = req.params;
+    const { productId, quantity } = req.body;
 
     try {
         let cart = await Cart.findOne({ user: userId });
@@ -43,8 +44,9 @@ router.post('/add', async (req, res) => {
 });
 
 // Remove Item from Cart
-router.delete('/remove', async (req, res) => {
-    const { userId, productId } = req.body;
+router.delete('/:userId', async (req, res) => {
+    const { userId } = req.params;
+    const { productId } = req.body;
 
     try {
         const cart = await Cart.findOne({ user: userId });
@@ -70,9 +72,10 @@ router.delete('/remove', async (req, res) => {
     }
 });
 
-// Update Item Quantity
-router.put('/update', async (req, res) => {
-    const { userId, productId, quantity } = req.body;
+// Update Item Quantity in Cart (backend route)
+router.patch('/:userId', async (req, res) => {
+    const { userId } = req.params;
+    const { productId, change } = req.body;
 
     try {
         const cart = await Cart.findOne({ user: userId });
@@ -84,14 +87,21 @@ router.put('/update', async (req, res) => {
         const item = cart.items.find(item => item.product.toString() === productId);
 
         if (item) {
-            item.quantity = quantity;
+            // Update quantity
+            item.quantity += change;
+
+            // If quantity becomes 0 or less, remove the item from the cart
+            if (item.quantity <= 0) {
+                cart.items = cart.items.filter(item => item.product.toString() !== productId);
+            }
         } else {
             return res.status(404).json({ message: 'Item not found in cart' });
         }
 
         // Recalculate total cost
+        const product = await Product.findById(productId);
         cart.totalCost = cart.items.reduce((total, item) => {
-            const productPrice = item.product.price;
+            const productPrice = product ? product.price : 0;
             return total + productPrice * item.quantity;
         }, 0);
 
@@ -106,14 +116,24 @@ router.put('/update', async (req, res) => {
 // View Cart
 router.get('/:userId', async (req, res) => {
     try {
-        const cart = await Cart.findOne({ user: req.params.userId }).populate('items.product');
+        // Attempt to find the user's cart
+        let cart = await Cart.findOne({ user: req.params.userId }).populate('items.product');
+
         if (!cart) {
-            return res.status(404).json({ message: 'Cart not found' });
+            // Create an empty cart for the user if one doesn't exist
+            cart = new Cart({
+                user: req.params.userId,
+                items: [],
+                totalCost: 0,
+            });
+
+            await cart.save(); // Save the newly created empty cart
         }
-        res.status(200).json(cart);
+
+        res.status(200).json(cart); // Return the cart
     } catch (error) {
-        console.error('Error fetching cart:', error);
-        res.status(500).json({ message: 'Error fetching cart' });
+        console.error('Error fetching or creating cart:', error);
+        res.status(500).json({ message: 'Error fetching or creating cart' });
     }
 });
 

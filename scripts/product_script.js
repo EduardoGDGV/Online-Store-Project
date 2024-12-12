@@ -1,28 +1,22 @@
 // This function is executed when the window is loaded
 window.onload = function () {
-    // Get the product ID from the URL query string
-    const productID = getProductIDFromURL();
-    
+    // Fetch the product data from the backend using the product ID
+    fetchProductData();
+};
+
+// Function to fetch product details from the server (MongoDB)
+async function fetchProductData() {
+    // Get the product ID from sessionStorage
+    const productID = sessionStorage.getItem('productId');
+
     // If no product ID is found, display an error message and stop execution
     if (!productID) {
         document.body.innerHTML = '<p>Product not found. Please return to the main page.</p>';
         return;
     }
 
-    // Fetch the product data from the backend using the product ID
-    fetchProductData(productID);
-};
-
-// This function retrieves the product ID from the URL query string
-function getProductIDFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('id');
-}
-
-// Function to fetch product details from the server (MongoDB)
-async function fetchProductData(productID) {
     try {
-        const response = await fetch(`/api/products/${productID}`);
+        const response = await fetch(`http://localhost:5000/api/products/${productID}`);
         const product = await response.json();
 
         if (response.ok) {
@@ -42,42 +36,38 @@ function displayProductDetails(product) {
     const mainContent = document.querySelector('.product-page-content');
     const loadIcon = document.getElementById('loader');
 
-    // Check if the main content container exists, if not, show an error message
     if (!mainContent) {
         console.error('Error: .product-page-content element not found.');
         document.body.innerHTML = '<p>An error occurred. Please try again later.</p>';
         return;
     }
 
-    // Get the cart data from the backend (MongoDB)
     fetchCartData().then(cart => {
-        // Check if the product is already in the cart
-        const existingProduct = cart.items.find((item) => item.product._id === product._id);
-
-        // Initialize the "Add to Cart" button HTML
-        let addToCartButtonHtml = `
-            <button class="add-to-cart-btn">Add to Cart</button>
-        `;
-
-        // Initialize the quantity buttons HTML (will only show if the product is already in the cart)
-        let quantityButtonsHtml = '';
-
-        // If the product is already in the cart, show quantity buttons instead of the "Add to Cart" button
-        if (existingProduct) {
-            quantityButtonsHtml = `
-                <div class="cart-item-quantity">
-                    <button onclick="updateQuantity(${product._id}, -1)">-</button>
-                    <span>${existingProduct.quantity}</span>
-                    <button onclick="updateQuantity(${product._id}, 1)">+</button>
-                </div>
-            `;
-            // Hide the "Add to Cart" button
-            addToCartButtonHtml = '';
+        let existingProduct = null;
+        if(cart.items){
+            // Ensure `cart.items` is an array and use optional chaining to avoid errors
+            existingProduct = cart.items?.find((item) => item?.product?._id === product._id);
         }
 
-        // Insert the product details HTML into the main content
+        let addToCartButtonHtml = '';
+        let quantityButtonsHtml = '';
+        if (!existingProduct || existingProduct.quantity <= 0) {
+            // If the product is not in the cart or quantity is zero, show "Add to Cart" button
+            addToCartButtonHtml = `
+                <button class="add-to-cart-btn">Add to Cart</button>
+            `;
+        } else {
+            // If the product is in the cart, show quantity buttons
+            quantityButtonsHtml = `
+                <div class="cart-item-quantity">
+                    <button class="quantity-btn" onclick="updateQuantity(-1)">-</button>
+                    <span>${existingProduct.quantity}</span>
+                    <button class="quantity-btn" onclick="updateQuantity(1)">+</button>
+                </div>
+            `;
+        }
+    
         mainContent.innerHTML = `
-            <!-- Top Info Section with Side-by-Side Layout -->
             <div class="product-top">
                 <div class="product-image">
                     <img src="${product.image || 'placeholder.png'}" alt="${product.name}">
@@ -91,44 +81,46 @@ function displayProductDetails(product) {
                         <span class="reviews">(0 reviews)</span>
                     </div>
                     <p class="price">R$ ${Number(product.price).toFixed(2)}</p>
-                            
-                    <!-- Add to Cart and Quantity Buttons -->
                     ${addToCartButtonHtml}
                     ${quantityButtonsHtml}
                 </div>
             </div>
-
-            <!-- Description Section -->
             <div class="product-description">
                 <h5>Description</h5>
                 <p>${product.description || 'No description available.'}</p>
             </div>
-
-            <!-- Reviews Section -->
             <div class="product-reviews">
                 <h5>Reviews</h5>
                 <p>No reviews yet.</p>
             </div>
         `;
-
-        // If the product is not already in the cart, add event listener to "Add to Cart" button
-        if (!existingProduct) {
+    
+        if (!existingProduct || existingProduct.quantity <= 0) {
             const addToCartBtn = mainContent.querySelector('.add-to-cart-btn');
             if (addToCartBtn) {
-                // Add the "Add to Cart" functionality when the button is clicked
-                addToCartBtn.addEventListener('click', () => addToCart(product._id));
+                addToCartBtn.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevent triggering the card's click event
+                    addToCart();
+                });
             }
         }
-
-        // Hide the loading icon once the content has been loaded
+    
         loadIcon.style.display = 'none';
-    });
+    });    
 }
 
-// Function to fetch cart data from the backend
+// Fetch cart data (from your backend)
 async function fetchCartData() {
+    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+    
+    if (!loggedInUser || !loggedInUser.id) {
+        alert('User not logged in. Redirecting to login page...');
+        window.location.href = 'login_page.html';
+        return;
+    }
+
     try {
-        const response = await fetch('/api/cart');
+        const response = await fetch(`http://localhost:5000/api/cart/${loggedInUser.id}`);
         const cart = await response.json();
 
         if (response.ok) {
@@ -143,10 +135,26 @@ async function fetchCartData() {
     }
 }
 
-// This function adds the product to the cart via an API request
-async function addToCart(productID) {
+// Add product to cart
+async function addToCart() {
+    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+    // Get the product ID from sessionStorage
+    const productID = sessionStorage.getItem('productId');
+
+    if (!loggedInUser || !loggedInUser.id) {
+        alert('User not logged in. Redirecting to login page...');
+        window.location.href = 'login_page.html';
+        return;
+    }
+
+    // If no product ID is found, display an error message and stop execution
+    if (!productID) {
+        document.body.innerHTML = '<p>Product not found. Please return to the main page.</p>';
+        return;
+    }
+
     try {
-        const response = await fetch('/api/cart/add', {
+        const response = await fetch(`http://localhost:5000/api/cart/${loggedInUser.id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -156,9 +164,11 @@ async function addToCart(productID) {
 
         const cart = await response.json();
 
+        const response2 = await fetch(`http://localhost:5000/api/products/${productID}`);
+        const product = await response2.json();
+
         if (response.ok) {
-            // Re-render the product details page with updated cart
-            displayProductDetails(cart.product);
+            displayProductDetails(product);
         } else {
             console.error('Error adding product to cart:', cart.message);
         }
@@ -167,26 +177,47 @@ async function addToCart(productID) {
     }
 }
 
-// This function updates the quantity of the product in the cart via an API request
-async function updateQuantity(productID, change) {
+// Function to update the quantity of a product in the cart
+async function updateQuantity(change) {
+    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+    // Get the product ID from sessionStorage
+    const productId = sessionStorage.getItem('productId');
+
+    if (!loggedInUser || !loggedInUser.id) {
+        alert('User not logged in. Redirecting to login page...');
+        window.location.href = 'login_page.html';
+        return;
+    }
+
+    // If no product ID is found, display an error message and stop execution
+    if (!productId) {
+        document.body.innerHTML = '<p>Product not found. Please return to the main page.</p>';
+        return;
+    }
+
     try {
-        const response = await fetch('/api/cart/update', {
-            method: 'PUT',
+        // Send the request to update the cart quantity
+        const response = await fetch(`http://localhost:5000/api/cart/${loggedInUser.id}`, {
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ productId: productID, quantityChange: change }),
+            body: JSON.stringify({
+                productId, // The product to update
+                change      // The quantity change (positive or negative)
+            }),
         });
 
-        const cart = await response.json();
-
         if (response.ok) {
-            // Re-render the product details page with updated cart
-            displayProductDetails(cart.product);
+            const updatedCart = await response.json();
+            console.log('Cart updated:', updatedCart);
+            fetchProductData(productId);
         } else {
-            console.error('Error updating product quantity:', cart.message);
+            console.error('Error updating cart:', await response.text());
+            alert('Failed to update cart quantity.');
         }
     } catch (error) {
-        console.error('Error updating quantity:', error);
+        console.error('Error updating cart:', error);
+        alert('An error occurred while updating the cart.');
     }
 }

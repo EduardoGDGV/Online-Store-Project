@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (window.location.pathname.endsWith('admin_page.html')) {
         if (!loggedInUser || loggedInUser.role !== 'admin') {
-            window.location.href = 'landing_page.html'; // Redirect to login if not logged in or not an admin
+            window.location.href = 'login_page.html'; // Redirect to login if not logged in or not an admin
         }
     }
 
