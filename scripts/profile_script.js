@@ -114,35 +114,27 @@ window.onload = function () {
     }
 
     async function saveChanges() {
-        const updatedUser = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            phone: document.getElementById('phone').value,
-            address: {
-                street: document.getElementById('street').value,
-                city: document.getElementById('city').value,
-                state: document.getElementById('state').value,
-                zip: document.getElementById('zip').value,
-                country: document.getElementById('country').value,
-            },
-            // Profile Picture upload can be handled here if needed
-        };
+        const updatedUser = new FormData();
+        updatedUser.append('name', document.getElementById('name').value);
+        updatedUser.append('email', document.getElementById('email').value);
+        updatedUser.append('phone', document.getElementById('phone').value);
+        updatedUser.append('street', document.getElementById('street').value);
+        updatedUser.append('city', document.getElementById('city').value);
+        updatedUser.append('state', document.getElementById('state').value);
+        updatedUser.append('country', document.getElementById('country').value);
+        updatedUser.append('zip', document.getElementById('zip').value);
+        updatedUser.append('profilePic', document.getElementById('profilePic').files[0]); // Ensure you get the file
     
         try {
             const response = await fetch(`http://localhost:5000/api/users/${loggedInUser.id}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedUser),
+                body: updatedUser, // Use FormData as the body
             });
     
             if (response.ok) {
                 // Update sessionStorage with the updated user data
-                sessionStorage.setItem('loggedInUser', JSON.stringify({
-                    ...loggedInUser,
-                    ...updatedUser, // Merge updated data with the existing data
-                }));
+                const updatedUserData = await response.json();
+                sessionStorage.setItem('loggedInUser', JSON.stringify(updatedUserData));
     
                 alert('Profile updated successfully');
                 displayProfileContent(); // Re-display the profile page

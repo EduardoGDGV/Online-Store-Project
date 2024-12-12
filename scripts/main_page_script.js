@@ -2,24 +2,49 @@ window.onload = async function () {
     const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser')); // Parse user details
     const searchIcon = document.getElementById('search-icon');
     const searchBarContainer = document.getElementById('search-bar-container');
+    const searchBar = document.querySelector('.search-bar'); // Get the search input
 
     if (!loggedInUser || !loggedInUser.id) {
         window.location.href = 'login_page.html';
         return;
     }
 
-    // Fetch and display products
-    await displayProducts(loggedInUser.id);
+    // Fetch and display products initially
+    let allProducts = await fetchProducts();
 
     // Handle search bar toggle
     searchIcon.addEventListener('click', function (event) {
         event.preventDefault();
         searchBarContainer.classList.toggle('show-search-bar');
     });
+
+    // Add event listener for search input
+    searchBar.addEventListener('input', function () {
+        const query = searchBar.value.toLowerCase(); // Get search query
+        const filteredProducts = allProducts.filter(product => {
+            return product.name.toLowerCase().includes(query) || product.description.toLowerCase().includes(query);
+        });
+        displayProducts(filteredProducts, loggedInUser.id); // Display filtered products
+    });
+
+    // Initially display all products
+    displayProducts(allProducts, loggedInUser.id);
 };
 
-// Function to fetch and display products from the server
-async function displayProducts(userId) {
+// Fetch and return all products
+async function fetchProducts() {
+    try {
+        const productResponse = await fetch('http://localhost:5000/api/products');
+        if (!productResponse.ok) throw new Error('Failed to fetch products.');
+        return await productResponse.json();
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        return [];
+    }
+}
+
+// Function to fetch and display products
+async function displayProducts(products, userId) {
     const mainContent = document.querySelector('.main-content');
     const loadIcon = document.getElementById('loader');
     mainContent.innerHTML = ''; // Clear current products
@@ -27,12 +52,6 @@ async function displayProducts(userId) {
     try {
         // Show loader
         loadIcon.style.display = 'block';
-
-        // Fetch products from the server
-        const productResponse = await fetch('http://localhost:5000/api/products');
-        if (!productResponse.ok) throw new Error('Failed to fetch products.');
-
-        const products = await productResponse.json();
 
         // Fetch the user's cart
         const cartResponse = await fetch(`http://localhost:5000/api/cart/${userId}`);
@@ -163,7 +182,6 @@ async function displayProducts(userId) {
         loadIcon.style.display = 'none';
     }
 }
-
 
 // Function to add a product to the user's cart
 async function addToCart(product, userId) {

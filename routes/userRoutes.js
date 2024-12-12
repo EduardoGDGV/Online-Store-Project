@@ -9,9 +9,11 @@ const router = express.Router();
 // Multer storage setup
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
+        console.log('Destination set for file upload.');
         cb(null, 'images/'); // Directory to store uploaded files
     },
     filename: (req, file, cb) => {
+        console.log(`Filename set to: ${Date.now()}-${file.originalname}`);
         cb(null, Date.now() + '-' + file.originalname); // Unique filename
     }
 });
@@ -21,8 +23,10 @@ const upload = multer({
     fileFilter: (req, file, cb) => {
         // Allow only image files
         if (file.mimetype.startsWith('image/')) {
+            console.log('File type is valid for upload.');
             cb(null, true);
         } else {
+            console.log('Invalid file type. Only image files are allowed.');
             cb(new Error('Only image files are allowed!'), false);
         }
     }
@@ -30,11 +34,13 @@ const upload = multer({
 
 // Get all users
 router.get('/', async (req, res) => {
+    console.log('Fetching all users...');
     try {
         const users = await User.find();
+        console.log('Users fetched successfully.');
         res.json(users);
     } catch (err) {
-        console.error(err);
+        console.error('Error fetching users:', err);
         res.status(500).json({ message: 'Failed to fetch users.' });
     }
 });
@@ -42,19 +48,22 @@ router.get('/', async (req, res) => {
 // Login Route
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-
+    console.log(`Login attempt with email: ${email}`);
     try {
         const user = await User.findOne({ email });
 
         if (!user) {
+            console.log('Invalid email or password.');
             return res.status(401).json({ message: 'Invalid email or password.' });
         }
 
         const isPasswordValid = await bcrypt.compare(String(password), user.password);
         if (!isPasswordValid) {
+            console.log('Passwords do not match.');
             return res.status(401).json({ message: 'Passwords do not match.' });
         }
 
+        console.log('Login successful.');
         res.json({
             id: user._id,
             email: user.email,
@@ -64,9 +73,8 @@ router.post('/login', async (req, res) => {
             address: user.address, // Return detailed address
             phone: user.phone,
         });
-
     } catch (err) {
-        console.error(err);
+        console.error('Error during login:', err);
         res.status(500).json({ message: 'Server error.' });
     }
 });
@@ -74,18 +82,21 @@ router.post('/login', async (req, res) => {
 // Signup Route
 router.post('/signup', upload.single('profilePic'), async (req, res) => {
     const { name, email, password, confirmPassword, role = 'user', address, phone } = req.body;
-
+    console.log('Signup attempt:', { name, email, role, address, phone });
     try {
         if (!name || !email || !password || !confirmPassword) {
+            console.log('Missing required fields.');
             return res.status(400).json({ message: 'All fields are required.' });
         }
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
+            console.log('Email already in use.');
             return res.status(400).json({ message: 'Email already in use.' });
         }
 
         if (password !== confirmPassword) {
+            console.log('Passwords do not match.');
             return res.status(400).json({ message: 'Passwords do not match.' });
         }
 
@@ -103,6 +114,7 @@ router.post('/signup', upload.single('profilePic'), async (req, res) => {
 
         await newUser.save();
 
+        console.log('User created successfully.');
         res.status(201).json({
             message: 'User created successfully!',
             user: {
@@ -124,6 +136,7 @@ router.post('/signup', upload.single('profilePic'), async (req, res) => {
 // Email check endpoint (to check if an email already exists)
 router.post('/check-email', async (req, res) => {
     const { email } = req.body;
+    console.log(`Checking if email exists: ${email}`);
     try {
         const user = await User.findOne({ email });
         res.json({ exists: !!user }); // Return true if user exists, false otherwise
@@ -135,38 +148,45 @@ router.post('/check-email', async (req, res) => {
 
 // Get all customers (role 'user')
 router.get('/customers', async (req, res) => {
+    console.log('Fetching all customers...');
     try {
         // Find users with role 'user' (customers)
         const customers = await User.find({ role: 'user' });
+        console.log('Customers fetched successfully.');
         res.json(customers); // Return customers as JSON
     } catch (err) {
-        console.error(err);
+        console.error('Error fetching customers:', err);
         res.status(500).json({ message: 'Server error.' });
     }
 });
 
 // Get all admins (role 'admin')
 router.get('/admins', async (req, res) => {
+    console.log('Fetching all admins...');
     try {
         // Find users with role 'admin' (admins)
         const admins = await User.find({ role: 'admin' });
+        console.log('Admins fetched successfully.');
         res.json(admins); // Return admins as JSON
     } catch (err) {
-        console.error(err);
+        console.error('Error fetching admins:', err);
         res.status(500).json({ message: 'Server error.' });
     }
 });
 
 // Get user by ID
 router.get('/:id', async (req, res) => {
+    console.log(`Fetching user by ID: ${req.params.id}`);
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
+            console.log('User not found.');
             return res.status(404).json({ message: 'User not found.' });
         }
+        console.log('User fetched successfully.');
         res.json(user);
     } catch (err) {
-        console.error(err);
+        console.error('Error fetching user by ID:', err);
         res.status(500).json({ message: 'Server error.' });
     }
 });
@@ -175,6 +195,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', upload.single('profilePic'), async (req, res) => {
     const { name, email, password, address, phone } = req.body;
     const profilePic = req.file ? req.file.path : undefined; // Optional new profile picture
+    console.log(`Updating user with ID: ${req.params.id}`);
 
     try {
         const updateData = {
@@ -189,18 +210,21 @@ router.put('/:id', upload.single('profilePic'), async (req, res) => {
         const updatedUser = await User.findByIdAndUpdate(req.params.id, updateData, { new: true });
 
         if (!updatedUser) {
+            console.log('User not found.');
             return res.status(404).json({ message: 'User not found.' });
         }
 
-        res.json(updatedUser);
+        console.log('User updated successfully.');
+        res.json(updatedUser); // Return the updated user data
     } catch (err) {
-        console.error(err);
+        console.error('Error updating user:', err);
         res.status(500).json({ message: 'Server error.' });
     }
 });
 
 // Delete user
 router.delete('/:id', async (req, res) => {
+    console.log(`Deleting user with ID: ${req.params.id}`);
     try {
         const userId = req.params.id;
 
@@ -208,6 +232,7 @@ router.delete('/:id', async (req, res) => {
         const user = await User.findById(userId);
 
         if (!user) {
+            console.log('User not found.');
             return res.status(404).json({ message: 'User not found.' });
         }
 
@@ -216,6 +241,8 @@ router.delete('/:id', async (req, res) => {
             fs.unlink(user.profilePic, (err) => {
                 if (err) {
                     console.error('Failed to delete profile picture:', err);
+                } else {
+                    console.log('Profile picture deleted successfully.');
                 }
             });
         }
@@ -223,9 +250,10 @@ router.delete('/:id', async (req, res) => {
         // Delete the user from the database
         await User.findByIdAndDelete(userId);
 
+        console.log('User and associated profile picture deleted successfully.');
         res.json({ message: 'User and associated profile picture deleted successfully.' });
     } catch (err) {
-        console.error(err);
+        console.error('Error deleting user:', err);
         res.status(500).json({ message: 'Failed to delete user.' });
     }
 });
