@@ -50,12 +50,14 @@ This project implements a functional e-commerce store that allows users to brows
   
 - **Server-Side Storage:**  
   On the server-side, MongoDB is used to store the following information:
-  - User account details (id, name, email, address, phone, password).
-  - Admin account details (id, name, email, phone, password).
-  - Product information (name, photo, description, price, stock, quantity sold).
+  - User account details (id, name, email, address, phone, password, profilePic, role, favorites).
+  - Admin account details (id, name, email, address, phone, password, profilePic, role).
+  - Product information (id, name, photo, description, producer, price, stock, verified, slug, rating).
 
 - **SessionStorage for Cart and Order Data:**  
   In addition to user information, shopping cart data is stored in `sessionStorage`, enabling quick access to the cart during the user's session. Similarly, when a user completes an order, the order details (including products purchased, total cost, etc.) are temporarily stored in `sessionStorage` until they are finalized and saved to the MongoDB database. This ensures a seamless checkout experience for the user.
+  - Cart details (id, user, items[product, quantity], totalCost, createdAt).
+  - Order details (id, userId, items[product, quantity, price], totalAmount, paymentMethod, status, createdAt, address).
   
 - **Dynamic Search and Favorites:**  
   The product search functionality is dynamic, enabling users to search for products as they type, making the browsing experience more intuitive. Additionally, users can add products to their favorites list, allowing easy access to previously viewed or purchased products.
@@ -65,9 +67,75 @@ This project implements a functional e-commerce store that allows users to brows
 
 ---
 
+## Password Hashing
+To ensure the security of user data, we implemented password hashing using the `bcrypt` library. When a user registers, their password is hashed before being saved to the MongoDB database. During login, the entered password is compared to the hashed password stored in the database using `bcrypt.compare`. This ensures that even if the database is compromised, user passwords remain secure as they are stored in an irreversible hashed format.
+
+### Example Code Snippet:
+```javascript
+const bcrypt = require('bcrypt');
+
+// Hashing the password before saving it to the database
+const hashPassword = async (password) => {
+    return await bcrypt.hash(password, 10);
+};
+
+// Comparing passwords during login
+const checkPassword = async (enteredPassword, storedHashedPassword) => {
+    return await bcrypt.compare(enteredPassword, storedHashedPassword);
+};
+```
+
+---
+
+## Image Upload Methodology
+To manage profile pictures and product images, we implemented an image upload system that stores uploaded files in the `images/` folder on the server. The file path is then stored in the MongoDB database, ensuring efficient retrieval and rendering of images on the front end.
+
+### Implementation Details:
+1. **Frontend Handling:**
+   - The profile picture and product image fields use HTML file inputs. Users can select an image to upload during profile editing or product creation.
+
+2. **Backend Handling:**
+   - The server uses the `multer` middleware to handle file uploads. Uploaded files are saved to the `images/` folder, and the file path is stored in the database.
+
+3. **File Structure:**
+   - The `images/` folder contains subdirectories for user profile pictures and product images, organized for easy management.
+
+### Example Code Snippet:
+```javascript
+const multer = require('multer');
+const path = require('path');
+
+// Set up storage for uploaded images
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'images/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    },
+});
+
+const upload = multer({ storage });
+
+// Route to handle profile picture upload
+app.put('/api/users/:id', upload.single('profilePic'), async (req, res) => {
+    const userId = req.params.id;
+    const profilePicPath = req.file ? req.file.path : null;
+
+    try {
+        const user = await User.findByIdAndUpdate(userId, { profilePic: profilePicPath }, { new: true });
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).send('Error updating profile picture');
+    }
+});
+```
+
+---
+
 ## Comments About the Code
 - The main entry file is `landing_page.html`, which serves as the index page for the online store.
-- The code is organized into multiple modules for user management, product management, and order processing. 
+- The code is organized into multiple modules for user management, product management, and order processing.
 - Inline comments have been added to complex functions for clarity.
 - To enter as the default admin, use the following credentials:
     ```bash
@@ -90,7 +158,7 @@ This project implements a functional e-commerce store that allows users to brows
     
 - **Profile Page and SessionStorage:**  
   The user profile page now utilizes `sessionStorage` to store the logged-in user information. This ensures that the user's details are persistent during their session and are easily accessible without repeated server requests.
-  
+
 - **Dynamic Search Bar:**  
   The search bar dynamically updates product results as the user types, querying the MongoDB database in real-time. This feature enhances the user experience by making it easier to find products instantly.
 
@@ -109,6 +177,7 @@ This project implements a functional e-commerce store that allows users to brows
 We will conduct the following tests to ensure functionality:
 - **Unit Tests:** Each function will be tested individually to verify correctness.
 - **Integration Tests:** Test interactions between modules (e.g., user login and product browsing).
+We used the default users and products created to simulate the purchase pipeline, as well as other functionalities, to assure good implementation.
 
 ---
 
@@ -196,4 +265,4 @@ We will conduct the following tests to ensure functionality:
       ```bash
       email: john@example.com  
       password: password123
-      ```
+      
