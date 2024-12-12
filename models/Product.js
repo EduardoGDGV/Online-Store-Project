@@ -18,7 +18,7 @@ const productSchema = new mongoose.Schema({
         type: Boolean, 
         default: false, // Default value for verified
     },
-    image: { type: String, default: 'images/default_placeholder.png'},
+    image: { type: String, default: 'http://localhost:5000/images/default_placeholder.png'},
     slug: {
         type: String,
         required: true,
