@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ` : '<select disabled><option>No Address Available</option></select>';
 
                     row.innerHTML = `
-                        <td><img src="${customer.profilePic || 'default-placeholder.png'}" alt="Profile Picture" width="50" height="50"></td>
+                        <td><img src="${customer.profilePic || 'http://localhost:5000/images/default-placeholder.png'}" alt="Profile Picture" width="50" height="50"></td>
                         <td>${customer.name}</td>
                         <td>${customer.email}</td>
                         <td>${addressDropdown}</td>
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ` : '<select disabled><option>No Address Available</option></select>';
 
                     row.innerHTML = `
-                        <td><img src="${admin.profilePic || 'default-placeholder.png'}" alt="Profile Picture" width="50" height="50"></td>
+                        <td><img src="${admin.profilePic || 'http://localhost:5000/images/default-placeholder.png'}" alt="Profile Picture" width="50" height="50"></td>
                         <td>${admin.name}</td>
                         <td>${admin.email}</td>
                         <td>${addressDropdown}</td>
@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function () {
             products.forEach(product => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td><img src="${product.image || 'default-placeholder.png'}" alt="Product Image" width="50" height="50"></td>
+                    <td><img src="${product.image || 'http://localhost:5000/images/default-placeholder.png'}" alt="Product Image" width="50" height="50"></td>
                     <td>${product.name}</td>
                     <td>${product.description.slice(0, 50)}...</td>
                     <td>${product.producer}</td>

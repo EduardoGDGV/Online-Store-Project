@@ -134,6 +134,7 @@ footer {
     font-family: 'Playfair Display', serif;
     opacity: 0.85; /* Reduced opacity to make it blend better */
     backdrop-filter: blur(5px); /* Apply a blur effect to the background */
+    z-index: 100;
 }
 
 footer p {
