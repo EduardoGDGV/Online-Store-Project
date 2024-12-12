@@ -157,6 +157,88 @@ router.get('/admins', async (req, res) => {
     }
 });
 
+// Get user's favorites or create an empty array if non-existent
+router.get('/favorites/:userId', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        // Ensure the favorites array exists, if not, create an empty array
+        if (!user.favorites) {
+            user.favorites = [];
+            await user.save(); // Save the newly created empty favorites array
+        }
+
+        // Remove null values from the favorites array
+        user.favorites = user.favorites.filter(favorite => favorite !== null);
+
+        res.status(200).json(user.favorites);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error fetching favorites');
+    }
+});
+
+// Add product to favorites
+router.post('/favorites/:userId', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        const { productId } = req.body;
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        // Ensure the favorites array exists
+        if (!user.favorites) {
+            user.favorites = [];  // Initialize favorites as an empty array if it doesn't exist
+            await user.save(); // Save the newly created empty favorites array
+        }
+
+        if (!user.favorites.includes(productId)) {
+            user.favorites.push(productId);
+            user.favorites = user.favorites.filter(favorite => favorite !== null); // Remove null values
+            await user.save();
+            return res.status(200).send('Product added to favorites');
+        }
+        res.status(400).send('Product already in favorites');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error adding to favorites');
+    }
+});
+
+// Remove product from favorites
+router.delete('/favorites/:userId', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        const { productId } = req.body;
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        if (!user.favorites) {
+            return res.status(400).send('No favorites found for user');
+        }
+
+        // Remove null values from the favorites array
+        user.favorites = user.favorites.filter(favorite => favorite !== null);
+
+        // Remove product from favorites
+        user.favorites = user.favorites.filter(id => id.toString() !== productId);
+
+        await user.save();
+        res.status(200).send('Product removed from favorites');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error removing from favorites');
+    }
+});
+
 // Get user by ID
 router.get('/:id', async (req, res) => {
     try {
@@ -174,7 +256,7 @@ router.get('/:id', async (req, res) => {
 // Update user
 router.put('/:id', upload.single('profilePic'), async (req, res) => {
     const { name, email, password, address, phone } = req.body;
-    const profilePic = req.file ? req.file.path : 'http://localhost:5000/images/default_placeholder.png'; // Optional new profile picture
+    const profilePic = req.file ? req.file.path : ''; // Optional new profile picture
 
     try {
         const updateData = {

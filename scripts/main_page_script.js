@@ -3,6 +3,7 @@ window.onload = async function () {
     const searchIcon = document.getElementById('search-icon');
     const searchBarContainer = document.getElementById('search-bar-container');
     const searchBar = document.querySelector('.search-bar'); // Get the search input
+    const favoriteIcon = document.getElementById('favorite-icon'); // Favorite icon element
 
     if (!loggedInUser || !loggedInUser.id) {
         window.location.href = 'login_page.html';
@@ -11,6 +12,7 @@ window.onload = async function () {
 
     // Fetch and display products initially
     let allProducts = await fetchProducts();
+    let favorites = await fetchFavorites(loggedInUser.id); // Fetch the user's favorites
 
     // Handle search bar toggle
     searchIcon.addEventListener('click', function (event) {
@@ -21,14 +23,21 @@ window.onload = async function () {
     // Add event listener for search input
     searchBar.addEventListener('input', function () {
         const query = searchBar.value.toLowerCase(); // Get search query
-        filteredProducts = allProducts.filter(product => {
+        const filteredProducts = allProducts.filter(product => {
             return product.name.toLowerCase().includes(query) || product.description.toLowerCase().includes(query);
         });
-        displayProducts(filteredProducts, loggedInUser.id); // Display filtered products
+        displayProducts(filteredProducts, loggedInUser.id, favorites); // Display filtered products
     });
 
     // Initially display all products
-    displayProducts(allProducts, loggedInUser.id);
+    displayProducts(allProducts, loggedInUser.id, favorites);
+
+    // Add event listener for favorite icon
+    favoriteIcon.addEventListener('click', function (event) {
+        // Filter products to show only favorites
+        const favoriteProducts = allProducts.filter(product => favorites.includes(product._id));
+        displayProducts(favoriteProducts, loggedInUser.id, favorites); // Display favorite products
+    });
 };
 
 // Fetch and return all products
@@ -43,8 +52,19 @@ async function fetchProducts() {
     }
 }
 
-// Function to fetch and display products
-async function displayProducts(products, userId) {
+async function fetchFavorites(userId) {
+    try {
+        const favoritesResponse = await fetch(`http://localhost:5000/api/users/favorites/${userId}`);
+        if (!favoritesResponse.ok) throw new Error('Failed to fetch favorites.');
+        const favorites = await favoritesResponse.json();
+        return Array.isArray(favorites) ? favorites : []; // Ensure favorites is an array
+    } catch (error) {
+        console.error('Error fetching favorites:', error);
+        return []; // Return an empty array if there's an error
+    }
+}
+
+async function displayProducts(products, userId, favorites) {
     const mainContent = document.querySelector('.main-content');
     const loadIcon = document.getElementById('loader');
     mainContent.innerHTML = ''; // Clear current products
@@ -75,18 +95,13 @@ async function displayProducts(products, userId) {
                 addToCartButtonHtml = `
                     <button class="add-to-cart-btn">Add to Cart</button>
                 `;
-            } else if(cartItem.quantity <= 0){
-                // If the product is not in the cart, show "Add to Cart" button
-                addToCartButtonHtml = `
-                    <button class="add-to-cart-btn">Add to Cart</button>
-                `;
             } else {
                 // If the product is in the cart, show quantity buttons
                 quantityButtonsHtml = `
                     <div class="cart-item-quantity">
-                        <button class="quantity-btn" onclick="updateCartQuantity('${product._id}', -1)">-</button>
+                        <button class="quantity-btn" onclick="updateCartQuantity(event, '${product._id}', -1)">-</button>
                         <span>${cartItem.quantity}</span>
-                        <button class="quantity-btn" onclick="updateCartQuantity('${product._id}', 1)">+</button>
+                        <button class="quantity-btn" onclick="updateCartQuantity(event, '${product._id}', 1)">+</button>
                     </div>
                 `;
             }
@@ -99,7 +114,9 @@ async function displayProducts(products, userId) {
                     <div class="head">
                         <h4>${product.name}</h4>
                         <button class="heart-btn">
-                            <span class="heart-icon">&#9825;</span>
+                            <span class="heart-icon ${Array.isArray(favorites) && favorites.includes(product._id) ? 'filled' : ''}">
+                                ${Array.isArray(favorites) && favorites.includes(product._id) ? '&#9829;' : '&#9825;'}
+                            </span>
                         </button>
                     </div>
                     <p class="producer">${product.producer}</p>
@@ -124,47 +141,29 @@ async function displayProducts(products, userId) {
                     event.stopPropagation(); // Prevent triggering the card's click event
                     addToCart(product, userId);
                 });
-            } else if(cartItem.quantity <= 0){
-                const addToCartBtn = productCard.querySelector('.add-to-cart-btn');
-                addToCartBtn.addEventListener('click', (event) => {
-                    event.stopPropagation(); // Prevent triggering the card's click event
-                    addToCart(product, userId);
-                });
-            }else{
-                // Add event listener for quantity buttons
-                const quantityButtons = productCard.querySelectorAll('.quantity-btn');
-                quantityButtons.forEach(button => {
-                    button.addEventListener('click', function (event) {
-                        event.stopPropagation(); // Prevent triggering the card's click event
-                        
-                        const action = this.getAttribute('data-action'); // Get the action (increase or decrease)
-                        const productId = this.getAttribute('data-product-id'); // Get the product ID
-                        
-                        // Update cart quantity based on the action
-                        if (action === 'increase') {
-                            updateCartQuantity(productId, 1); // Increase quantity
-                        } else if (action === 'decrease') {
-                            updateCartQuantity(productId, -1); // Decrease quantity
-                        }
-                    });
-                });
             }
 
-            // Heart button functionality
+            // Add event listener for heart button (Favorite functionality)
             const heartButton = productCard.querySelector('.heart-btn');
             heartButton.addEventListener('click', function (event) {
                 event.stopPropagation(); // Prevent triggering the card's click event
                 const heartIcon = this.querySelector('.heart-icon');
-                heartIcon.classList.toggle('filled');
-                heartIcon.innerHTML = heartIcon.classList.contains('filled') ? '&#9829;' : '&#9825;';
+                const isFavorited = heartIcon.classList.contains('filled'); // Check if the heart is filled
+
+                // Toggle favorite state
+                if (isFavorited) {
+                    heartIcon.classList.remove('filled'); // Remove the filled class
+                    heartIcon.innerHTML = '&#9825;'; // Change to empty heart
+                    removeFromFavorites(product._id, userId);
+                } else {
+                    heartIcon.classList.add('filled'); // Add the filled class
+                    heartIcon.innerHTML = '&#9829;'; // Change to filled heart
+                    addToFavorites(product._id, userId);
+                }
             });
 
             // Add a click event listener to the entire product card to redirect to the product's page
             productCard.addEventListener('click', function () {
-                if (event.target.closest('.add-to-cart-btn') || event.target.closest('.heart-btn') || event.target.closest('quantity-btn')) {
-                    return; // Skip redirection for these elements
-                }
-                // Store the product ID in sessionStorage
                 sessionStorage.setItem('productId', product._id);
                 window.location.href = 'product_page.html';
             });
@@ -180,6 +179,47 @@ async function displayProducts(products, userId) {
         console.error('Error fetching products or cart:', error);
         mainContent.innerHTML = '<p>Error loading products. Please try again later.</p>';
         loadIcon.style.display = 'none';
+    }
+}
+
+// Function to update the quantity of a product in the cart
+async function updateCartQuantity(event, productId, change) {
+    event.stopPropagation();  // Stop propagation to prevent triggering card's click event
+
+    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+    
+    if (!loggedInUser || !loggedInUser.id) {
+        alert('User not logged in. Redirecting to login page...');
+        window.location.href = 'login_page.html';
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:5000/api/cart/${loggedInUser.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                productId,
+                change
+            }),
+        });
+
+        if (response.ok) {
+            const updatedCart = await response.json();
+            console.log('Cart updated:', updatedCart);
+
+            // Fetch and display products again
+            let allProducts = await fetchProducts();
+            await displayProducts(allProducts, loggedInUser.id);
+        } else {
+            console.error('Error updating cart:', await response.text());
+            alert('Failed to update cart quantity.');
+        }
+    } catch (error) {
+        console.error('Error updating cart:', error);
+        alert('An error occurred while updating the cart.');
     }
 }
 
@@ -201,7 +241,7 @@ async function addToCart(product, userId) {
             const updatedCart = await response.json();
             console.log('Cart updated:', updatedCart);
 
-            // Fetch and display products initially
+            // Fetch and display products again
             let allProducts = await fetchProducts();
             await displayProducts(allProducts, userId); // Refresh products to reflect cart changes
         } else {
@@ -214,43 +254,40 @@ async function addToCart(product, userId) {
     }
 }
 
-// Function to update the quantity of a product in the cart
-async function updateCartQuantity(productId, change) {
-    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
-    
-    if (!loggedInUser || !loggedInUser.id) {
-        alert('User not logged in. Redirecting to login page...');
-        window.location.href = 'login_page.html';
-        return;
-    }
-
+// Function to add a product to the user's favorites
+async function addToFavorites(productId, userId) {
     try {
-        // Send the request to update the cart quantity
-        const response = await fetch(`http://localhost:5000/api/cart/${loggedInUser.id}`, {
-            method: 'PATCH',
+        const response = await fetch(`http://localhost:5000/api/users/favorites/${userId}`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                productId, // The product to update
-                change      // The quantity change (positive or negative)
-            }),
+            body: JSON.stringify({ productId }),
         });
 
-        if (response.ok) {
-            const updatedCart = await response.json();
-            console.log('Cart updated:', updatedCart);
-
-            // Fetch and display products initially
-            let allProducts = await fetchProducts();
-            // Re-fetch and display products to reflect updated cart state
-            await displayProducts(allProducts, loggedInUser.id);
-        } else {
-            console.error('Error updating cart:', await response.text());
-            alert('Failed to update cart quantity.');
+        if (!response.ok) {
+            console.error('Failed to add to favorites.');
         }
     } catch (error) {
-        console.error('Error updating cart:', error);
-        alert('An error occurred while updating the cart.');
+        console.error('Error adding to favorites:', error);
+    }
+}
+
+// Function to remove a product from the user's favorites
+async function removeFromFavorites(productId, userId) {
+    try {
+        const response = await fetch(`http://localhost:5000/api/users/favorites/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productId }),
+        });
+
+        if (!response.ok) {
+            console.error('Failed to remove from favorites.');
+        }
+    } catch (error) {
+        console.error('Error removing from favorites:', error);
     }
 }

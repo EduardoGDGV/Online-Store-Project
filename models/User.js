@@ -17,9 +17,10 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, default: 'user' },
-    profilePic: { type: String, default: 'http://localhost:5000/images/default_placeholder.png'}, // Default product image
-    address: { type: addressSchema, default: () => ({}) }, // Use the address schema
-    phone: { type: String, default: '' }
+    profilePic: { type: String, default: 'http://localhost:5000/images/default_placeholder.png'},
+    address: { type: addressSchema, default: () => ({}) },
+    phone: { type: String, default: '' },
+    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] // Add favorites array
 });
 
 module.exports = mongoose.model('User', userSchema);
